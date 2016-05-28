@@ -14,9 +14,8 @@ object LoadFile {
     val sc = new SparkContext(conf)
 
 
-    import libble.context.implicits.sc2LibContext
+    import libble.context.implicits._
     val training=sc.loadlibbleFile("sparse.data")
-    import libble.context.implicits.RDD2LibRDD
     println(training.count())
     training.saveAslibbleFile("this.data")
 
