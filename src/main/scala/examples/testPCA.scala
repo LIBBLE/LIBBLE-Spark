@@ -1,3 +1,7 @@
+/**
+  * We licence this file to you under the Apache Licence 2.0; you could get a copy
+  * of the licence from http://www.apache.org/licenses/LICENSE-2.0.
+  */
 package libble.examples
 
 import libble.dimReduction.PCA
@@ -6,9 +10,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 
 import scala.collection.mutable
 
-/**
-  * Created by gao on 2016/5/27.
-  */
+
 object testPCA {
   def main(args: Array[String]): Unit = {
     Logger.getLogger("org.apache.spark").setLevel(Level.WARN)

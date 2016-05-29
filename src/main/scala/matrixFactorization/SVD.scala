@@ -1,3 +1,7 @@
+/**
+  * We licence this file to you under the Apache Licence 2.0; you could get a copy
+  * of the licence from http://www.apache.org/licenses/LICENSE-2.0.
+  */
 package libble.matrixDecomposition
 
 import scala.collection.mutable.ArrayBuffer
@@ -11,9 +15,7 @@ import libble.dimReduction.GLS_Matrix_Batch
 import org.apache.spark.Logging
 import org.apache.spark.rdd.RDD
 
-/**
- * Created by gao on 2016/5/26.
- */
+
 class SVD(var K: Int,
           var bound: Double,
           var stepSize: Double,

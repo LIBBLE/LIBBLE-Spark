@@ -1,3 +1,7 @@
+/**
+  * We licence this file to you under the Apache Licence 2.0; you could get a copy
+  * of the licence from http://www.apache.org/licenses/LICENSE-2.0.
+  */
 package libble.dimReduction
 
 import libble.linalg.{DenseVector, Vector}
@@ -11,9 +15,7 @@ import java.util.Calendar
 import org.apache.spark.Logging
 import org.apache.spark.rdd.RDD
 
-/**
- * Created by gao on 2016/5/26.
- */
+
 class GLS_Matrix_Batch (var stepSize: Double,
                         var regParam: Double,
                         var factor: Double,
