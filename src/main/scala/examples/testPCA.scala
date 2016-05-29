@@ -7,10 +7,11 @@ package libble.examples
 import libble.dimReduction.PCA
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.{SparkConf, SparkContext}
-
 import scala.collection.mutable
 
-
+/**
+  * This is the example of using PCA.
+  */
 object testPCA {
   def main(args: Array[String]): Unit = {
     Logger.getLogger("org.apache.spark").setLevel(Level.WARN)

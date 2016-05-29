@@ -6,7 +6,6 @@ package libble.dimReduction
 
 import scala.collection.mutable.ArrayBuffer
 import java.util.Calendar
-
 import libble.context.Instance
 import libble.linalg.{DenseVector, Vector}
 import libble.linalg.implicits._
@@ -31,11 +30,6 @@ class PCA(var K: Int,
       s"data dimension size is ${training.first().features.size}, it must be greater than K=$K")
 
     val centerData = centralize(training)
-    // centerData.collect().map(x => println(x.features))
-    // val statTraining = centerData.map(x => Vectors.dense(x.features.toArray))
-    // val summary: MultivariateStatisticalSummary = Statistics.colStats(statTraining)
-    // for (i <- 1 to 3) println(summary.mean.apply(i) + ", " + summary.variance.apply(i))
-    //    println(s"center data size: ${centerData.count()}")
 
     val st = Calendar.getInstance().getTimeInMillis
     val m = new GLS_Matrix_Batch(stepSize, 0.0, 0.0, iteration, parts, batchSize, K)

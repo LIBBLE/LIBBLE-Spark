@@ -7,7 +7,7 @@ package libble.linalg
 import java.util
 
 /**
-  *
+  * This is the trait of Vector.
   */
 sealed trait Vector extends Serializable {
 
@@ -58,7 +58,7 @@ sealed trait Vector extends Serializable {
 }
 
 /**
-  *
+  * class of Dense Vector.
   * @param values
   */
 case class DenseVector(val values: Array[Double]) extends Vector {
@@ -171,7 +171,7 @@ case class DenseVector(val values: Array[Double]) extends Vector {
 }
 
 /**
-  *
+  * Class of the Sparse Vector.
   * @param indices
   * @param values
   * @param dim

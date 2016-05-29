@@ -7,7 +7,7 @@ package libble.regression
 import libble.generalizedLinear.{GeneralizedLinearModel, L1Reg, LeastSquareLoss}
 
 /**
-  *
+  * This is the model of LinearRegression with default regularization L1Reg.
   * @param stepSize
   * @param regParam
   * @param factor
@@ -22,6 +22,10 @@ class LinearRegression(stepSize: Double,
 
   setLossFunc(new LeastSquareLoss)
   setRegularizer(new L1Reg())
+
+  /**
+    * output the predict value.
+    */
   clearThreshold
 
 

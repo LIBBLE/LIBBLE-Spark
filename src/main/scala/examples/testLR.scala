@@ -9,7 +9,9 @@ import org.apache.log4j.{Level, Logger}
 import org.apache.spark.{SparkConf, SparkContext}
 
 import scala.collection.mutable
-
+/***
+  * Here is the example of using LogisticRegression.
+  */
 object testLR {
   def main(args: Array[String]) {
 

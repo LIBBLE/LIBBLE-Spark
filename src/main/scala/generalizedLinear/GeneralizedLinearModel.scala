@@ -14,6 +14,7 @@ import scala.math._
 import scala.util.Random
 
 /**
+  * This class is the model of Generalized Linear Algorithms with default lossfunc LogisticLoss and default regularization L2Reg.
   *
   * @param stepSize
   * @param regParam
@@ -39,7 +40,6 @@ class GeneralizedLinearModel(var stepSize: Double,
 
 
   private[this] var numPredictor: Int = 1
-
 
 
   var threshold: Option[Double] = Some(0.5)
@@ -157,7 +157,7 @@ class GeneralizedLinearModel(var stepSize: Double,
     */
   def setClassNum(classNum: Int): this.type = {
     numPredictor = classNum - 1
-    lossfunc=new LogisticLoss(classNum)
+    lossfunc = new LogisticLoss(classNum)
     this
   }
 
@@ -305,7 +305,7 @@ class GeneralizedLinearModel(var stepSize: Double,
     * @param v
     * @return Double
     */
- def predict(v: Vector): Double = {
+  def predict(v: Vector): Double = {
     if (threshold == None) {
       predictT(v)
     }
@@ -324,7 +324,6 @@ class GeneralizedLinearModel(var stepSize: Double,
       predictT(input).map(e => if (e > threshold.get) 1.0 else 0.0)
     }
   }
-
 
 
   private def predictT(v: Vector): Double = weights match {
@@ -348,7 +347,6 @@ class GeneralizedLinearModel(var stepSize: Double,
   private def predictT(input: RDD[Vector]): RDD[Double] = {
     input.map(predict)
   }
-
 
 
 }

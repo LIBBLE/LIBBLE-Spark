@@ -7,7 +7,7 @@ package libble.linalg
 import scala.collection.mutable.ArrayBuffer
 
 /**
-  *
+  * Using with the implicit method, add fuctions to the Vectors.
   * @param vec
   */
 class VectorsOp(val vec: Vector) {

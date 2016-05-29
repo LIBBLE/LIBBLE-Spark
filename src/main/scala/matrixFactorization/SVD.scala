@@ -16,6 +16,17 @@ import org.apache.spark.Logging
 import org.apache.spark.rdd.RDD
 
 
+/**
+  * This is the model of SVD.
+  *
+  * @param K
+  * @param bound
+  * @param stepSize
+  * @param iteration
+  * @param parts
+  * @param batchSize
+  */
+
 class SVD(var K: Int,
           var bound: Double,
           var stepSize: Double,

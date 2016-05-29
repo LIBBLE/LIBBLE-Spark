@@ -9,7 +9,9 @@ import libble.linalg.{DenseVector, SparseVector}
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
 
-
+/**
+  * Here we define the implicit convert function.
+  */
 object implicits {
   implicit def sc2LibContext(sc: SparkContext) = new LibContext(sc)
 
@@ -17,7 +19,7 @@ object implicits {
 }
 
 /**
-  * This class includes the methods of load libbleFILE from the file system
+  * This class includes the methods of load libbleFILE from the file system.
   *
   * @param sc
   */
@@ -52,7 +54,7 @@ class LibContext(val sc: SparkContext) {
         val temp = item.split(":")
         (temp.head.toInt - 1, temp.last.toDouble)
       }.unzip
-      (label, term._1.toArray,term._2.toArray)
+      (label, term._1.toArray, term._2.toArray)
     }.cache()
     val d = terms.map(_._2.lastOption.getOrElse(0))
       .reduce(math.max) + 1
@@ -94,7 +96,7 @@ class LibContext(val sc: SparkContext) {
             val temp = item.split(':')
             (temp.head.toInt - 1, temp.last.toDouble)
           }.unzip
-          (label, term._1.toArray,term._2.toArray)
+          (label, term._1.toArray, term._2.toArray)
         }.cache()
 
         val d = terms.map(_._2.lastOption.getOrElse(0)).reduce(math.max) + 1
@@ -118,6 +120,7 @@ class LibContext(val sc: SparkContext) {
 
 /**
   * With this class,we add save data method to the RDD[Instance].
+  *
   * @param data
   */
 class libbleRDD(val data: RDD[Instance]) {

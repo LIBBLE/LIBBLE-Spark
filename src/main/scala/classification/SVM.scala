@@ -7,6 +7,7 @@ package libble.classification
 import libble.generalizedLinear.{GeneralizedLinearModel, HingeLoss, L2Reg}
 
 /**
+  *This class is the model of SVM with default regularization L2Reg.
   *
   * @param stepSize
   * @param regParam
@@ -21,6 +22,10 @@ class SVM(stepSize: Double,
           partsNum: Int) extends GeneralizedLinearModel(stepSize, regParam, factor, iters, partsNum){
   setLossFunc(new HingeLoss)
   setRegularizer(new L2Reg)
+
+  /**
+    * default threshold is 0.0.
+    */
   setThreshold(0.0)
 
 }

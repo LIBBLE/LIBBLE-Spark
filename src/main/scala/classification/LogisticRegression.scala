@@ -7,6 +7,7 @@ package libble.classification
 import libble.generalizedLinear.{GeneralizedLinearModel, L2Reg, LogisticLoss}
 
 /**
+  * This class is the model of LogisticRegression with default regularization L2Reg.
   *
   * @param stepSize
   * @param regParam
@@ -22,6 +23,10 @@ class LogisticRegression(stepSize: Double,
 
   setLossFunc(new LogisticLoss())
   setRegularizer(new L2Reg())
+
+  /**
+    * default threshold is 0.5.
+    */
   setThreshold(0.5)
 
 
