@@ -16,11 +16,11 @@ import scala.util.Random
 /**
   * This class is the model of Generalized Linear Algorithms with default lossfunc LogisticLoss and default regularization L2Reg.
   *
-  * @param stepSize
-  * @param regParam
-  * @param factor
-  * @param iters
-  * @param partsNum
+  * @param stepSize the learning rate.
+  * @param regParam the regParam
+  * @param factor   the elastic param
+  * @param iters    the number of outer loop
+  * @param partsNum the number of partitions which correspond to the number of task.
   */
 class GeneralizedLinearModel(var stepSize: Double,
                              var regParam: Double,
@@ -44,28 +44,42 @@ class GeneralizedLinearModel(var stepSize: Double,
 
   var threshold: Option[Double] = Some(0.5)
 
+  /**
+    *
+    * @param value
+    * @return this.type
+    */
   def setThreshold(value: Double): this.type = {
     threshold = Some(value)
     this
   }
 
+  /**
+    *
+    * @return this.type
+    */
   def clearThreshold: this.type = {
     threshold = None
     this
   }
 
   /**
-    * set add Bias
+    * set add Bias or not.
     *
     * @param value
-    * @return this
+    * @return this.type
     */
   private[this] def setBias(value: Boolean): this.type = {
     addBias = value
     this
   }
 
-
+  /**
+    * Set the stop bound.
+    *
+    * @param value
+    * @return
+    */
   def setStopBound(value: Double): this.type = {
     stopBound = value
     this
@@ -162,6 +176,7 @@ class GeneralizedLinearModel(var stepSize: Double,
   }
 
   /**
+    * Training the model on training data.
     *
     * @param trainingData
     * @return lossArray
@@ -179,6 +194,7 @@ class GeneralizedLinearModel(var stepSize: Double,
   }
 
   /**
+    * Training on training data with initial weights.
     *
     * @param trainingData
     * @param initialWeights
@@ -209,12 +225,12 @@ class GeneralizedLinearModel(var stepSize: Double,
   }
 
   /**
-    *
+    * Engine.
     * @param data
     * @param initialWeights
     * @return lossArray
     */
-  def runEngine(data: RDD[(Double, Vector)], initialWeights: Vector): Array[Double] = {
+  private[this] def runEngine(data: RDD[(Double, Vector)], initialWeights: Vector): Array[Double] = {
     val count = data.count()
     var w = initialWeights.copy
     val n = w.size
@@ -301,7 +317,7 @@ class GeneralizedLinearModel(var stepSize: Double,
   }
 
   /**
-    *
+    * Predict on the Vector using the model.
     * @param v
     * @return Double
     */
@@ -313,7 +329,7 @@ class GeneralizedLinearModel(var stepSize: Double,
   }
 
   /**
-    *
+    *Predict on the data using the model.
     * @param input
     * @return RDD[Double]
     */
