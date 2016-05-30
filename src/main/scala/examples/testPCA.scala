@@ -4,13 +4,14 @@
   */
 package libble.examples
 
-import libble.matrixDecomposition.SVD
+import libble.dimReduction.PCA
 import org.apache.log4j.{Level, Logger}
-import org.apache.spark.{SparkConf, SparkContext}
+import org.apache.spark.{SparkContext, SparkConf}
 
 import scala.collection.mutable
 
-object testSVD {
+
+object testPCA {
   def main(args: Array[String]): Unit = {
     Logger.getLogger("org.apache.spark").setLevel(Level.WARN)
     Logger.getLogger("org.eclipse.jetty.server").setLevel(Level.OFF)
@@ -42,19 +43,17 @@ object testSVD {
     val batchSize = options.remove("batchSize").map(_.toInt).getOrElse(100)
 
     /*
-     * Scope SVD
+     * Scope PCA
      */
     import libble.context.implicits._
     val training = sc.loadlibbleFile(args(0))
 
-    val mysvd = new SVD(K, bound, stepSize, numIters, numPart, batchSize)       //matrix, altogether update eigens
+    val mypca = new PCA(K, bound, stepSize, numIters, numPart, batchSize)       //matrix, altogether update eigens
+    val PCAModel = mypca.train(training)
 
-    val SVDModel = mysvd.train(training)
+    val pc = PCAModel._2
+    val projected = mypca.transform(training, pc)
+    projected.collect().foreach(x=>println(x.features))
 
-    val sigma = SVDModel._1
-    val v = SVDModel._2
-
-    sigma.foreach(x=>print(x+","))
-    v.foreach(x=>println(x))
   }
 }
