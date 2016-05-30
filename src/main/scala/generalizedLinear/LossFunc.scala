@@ -28,8 +28,7 @@ abstract class LossFunc extends Serializable {
   def deltaF(data: Vector, label: Double, weights: Vector): Vector
 
   /**
-    * Here we return the gradient cumulate and loss.
-    * If cum is a Vector with all zero data, the cum is right the graident.
+    * Here we return the gradient factor and loss.
     *
     * @param data
     * @param label
@@ -138,13 +137,12 @@ class LogisticLoss(classNum: Int) extends LossFunc {
   }
 
   /**
-    * Here we return the gradient cumulate and loss.
-    * If cum is a Vector with all zero data, the cum is right the graident.
+    * Here we return the gradient factor and loss.
     *
     * @param data
     * @param label
     * @param weights
-    * @return delta cumulate to cum,and loss
+    * @return delta fator,and loss
     */
   override def deltaFWithLoss(data: Vector, label: Double, weights: Vector): (Vector, Double) = {
     require((data.size % weights.size) == 0 || classNum == (weights.size / data.size + 1), "weights size not match!!!")
@@ -288,8 +286,7 @@ class HingeLoss extends LossFunc {
   }
 
   /**
-    * Here we return the gradient cumulate and loss.
-    * If cum is a Vector with all zero data, the cum is right the graident.
+    * Here we return the gradient factor and loss.
     *
     * @param data
     * @param label
@@ -338,8 +335,7 @@ class LeastSquareLoss extends LossFunc {
   }
 
   /**
-    * Here we return the gradient cumulate and loss.
-    * If cum is a Vector with all zero data, the cum is right the graident.
+    * Here we return the gradient factor and loss.
     *
     * @param data
     * @param label
