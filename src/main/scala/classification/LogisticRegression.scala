@@ -24,10 +24,21 @@ class LogisticRegression(stepSize: Double,
   setLossFunc(new LogisticLoss())
   setRegularizer(new L2Reg())
 
+
   /**
     * default threshold is 0.5.
     */
   setThreshold(0.5)
 
+  /**
+    * set the classNum
+    *
+    * @param classNum
+    * @return this
+    */
+  override def setClassNum(classNum: Int): LogisticRegression.this.type ={
+    super.setClassNum(classNum)
+    setLossFunc(new LogisticLoss(classNum))
 
+  }
 }

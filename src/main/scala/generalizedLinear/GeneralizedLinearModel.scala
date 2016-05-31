@@ -171,7 +171,6 @@ class GeneralizedLinearModel(var stepSize: Double,
     */
   def setClassNum(classNum: Int): this.type = {
     numPredictor = classNum - 1
-    lossfunc = new LogisticLoss(classNum)
     this
   }
 
