@@ -48,7 +48,7 @@ object testLR {
     import libble.context.implicits.sc2LibContext
     val training = sc.loadlibbleFile(args(0), numPart)
 
-    val m = new LogisticRegression(stepSize, regParam, elasticF, numIter, numPart).setClassNum(10)
+    val m = new LogisticRegression(stepSize, regParam, elasticF, numIter, numPart).setClassNum(numClasses)
 
     m.train(training)
 
