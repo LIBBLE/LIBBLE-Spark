@@ -15,11 +15,11 @@ import org.apache.spark.rdd.RDD
 object implicits {
   implicit def sc2LibContext(sc: SparkContext) = new LibContext(sc)
 
-  implicit def RDD2LibRDD(data: RDD[Instance]) = new libbleRDD(data)
+  implicit def RDD2LIBBLERDD(data: RDD[Instance]) = new LIBBLERDD(data)
 }
 
 /**
-  * This class includes the methods of load libbleFILE from the file system.
+  * This class includes the methods of load LIBBLEFILE from the file system.
   *
   * @param sc
   */
@@ -29,7 +29,7 @@ class LibContext(val sc: SparkContext) {
     *
     * @param path
     * @return RDD[Instance]
-    * @deprecated replaced by function loadlibbleFile
+    * @deprecated replaced by function loadLibSVMFile
     */
   def loadLibSVMFile(path: String): RDD[Instance] = {
     loadLibSVMFile(path, sc.defaultMinPartitions)
@@ -41,7 +41,7 @@ class LibContext(val sc: SparkContext) {
     * @param path
     * @param partsNum
     * @return RDD[Instance]
-    * @deprecated replaced by function loadlibbleFile
+    * @deprecated replaced by function loadLibSVMFile
     */
   def loadLibSVMFile(path: String, partsNum: Int): RDD[Instance] = {
     val lines = sc.textFile(path, partsNum)
@@ -65,25 +65,25 @@ class LibContext(val sc: SparkContext) {
   }
 
   /**
-    * Load libble file from File System with default parallelization
+    * Load LIBBLE file from File System with default parallelization
     * Compatible with LibSVM file.
     *
     * @param path
     * @return RDD[Instance]
     */
-  def loadlibbleFile(path: String): RDD[Instance] = {
-    loadlibbleFile(path, sc.defaultMinPartitions)
+  def loadLIBBLEFile(path: String): RDD[Instance] = {
+    loadLIBBLEFile(path, sc.defaultMinPartitions)
   }
 
   /**
-    * Load libble file from File System with given parallelization.
+    * Load LIBBLE file from File System with given parallelization.
     * Compatible with LibSVM file.
     *
     * @param path
     * @param partsNum
     * @return RDD[Instance]
     */
-  def loadlibbleFile(path: String, partsNum: Int): RDD[Instance] = {
+  def loadLIBBLEFile(path: String, partsNum: Int): RDD[Instance] = {
     val lines = sc.textFile(path, partsNum)
       .map(_.trim)
       .filter(line => !(line.isEmpty || line.startsWith("#")))
@@ -123,7 +123,7 @@ class LibContext(val sc: SparkContext) {
   *
   * @param data
   */
-class libbleRDD(val data: RDD[Instance]) {
+class LIBBLERDD(val data: RDD[Instance]) {
   /**
     * Save data to File System in LibSVM format.
     *
@@ -141,11 +141,11 @@ class libbleRDD(val data: RDD[Instance]) {
   }
 
   /**
-    * Save data to File System in libble format.
+    * Save data to File System in LIBBLE format.
     *
     * @param path
     */
-  def saveAslibbleFile(path: String): Unit = {
+  def saveAsLIBBLEFile(path: String): Unit = {
     val first = data.first()
     first.features match {
       case sv: SparseVector => {

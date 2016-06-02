@@ -46,7 +46,7 @@ object testPCA {
      * Scope PCA
      */
     import libble.context.implicits._
-    val training = sc.loadlibbleFile(args(0))
+    val training = sc.loadLIBBLEFile(args(0))
 
     val mypca = new PCA(K, bound, stepSize, numIters, numPart, batchSize)       //matrix, altogether update eigens
     val PCAModel = mypca.train(training)

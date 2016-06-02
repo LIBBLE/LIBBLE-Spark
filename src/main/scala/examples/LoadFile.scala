@@ -7,7 +7,7 @@ package libble.examples
 import org.apache.spark.{SparkConf, SparkContext}
 
 /***
-  * here we test the function of loadlibSVMFile and loadlibbleFile, the class  LibContext pass
+  * here we test the function of loadlibSVMFile and loadLIBBLEFile, the class  LibContext pass
   */
 object LoadFile {
   def main(args: Array[String]) {
@@ -19,9 +19,9 @@ object LoadFile {
 
 
     import libble.context.implicits._
-    val training=sc.loadlibbleFile("sparse.data")
+    val training=sc.loadLIBBLEFile("sparse.data")
     println(training.count())
-    training.saveAslibbleFile("this.data")
+    training.saveAsLIBBLEFile("this.data")
 
 
 

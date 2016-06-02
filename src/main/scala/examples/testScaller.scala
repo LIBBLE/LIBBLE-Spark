@@ -20,7 +20,7 @@ object testScaller {
 
 
     import libble.context.implicits.sc2LibContext
-    val training = sc.loadlibbleFile("sparse.data")
+    val training = sc.loadLIBBLEFile("sparse.data")
 
     val scaller = new Scaller(true, true)
     val features = training.map(_.features)

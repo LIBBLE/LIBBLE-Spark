@@ -45,7 +45,7 @@ object testSVD {
      * Scope SVD
      */
     import libble.context.implicits._
-    val training = sc.loadlibbleFile(args(0))
+    val training = sc.loadLIBBLEFile(args(0))
 
     val mysvd = new SVD(K, bound, stepSize, numIters, numPart, batchSize)       //matrix, altogether update eigens
 
