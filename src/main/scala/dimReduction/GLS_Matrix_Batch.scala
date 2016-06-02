@@ -16,6 +16,18 @@ import org.apache.spark.Logging
 import org.apache.spark.rdd.RDD
 
 
+/**
+ *
+ * This class is the Generalized Linear Algorithms for PCA model which uses mini-batch strategy during optimization process
+ *
+ * @param stepSize
+ * @param regParam
+ * @param factor
+ * @param iters
+ * @param parts
+ * @param batchSize
+ * @param K
+ */
 class GLS_Matrix_Batch (var stepSize: Double,
                         var regParam: Double,
                         var factor: Double,
@@ -28,12 +40,22 @@ class GLS_Matrix_Batch (var stepSize: Double,
   private[this] var stopBound: Double = 0.0
   var weightsVector: Option[Vector] = None
 
+  /**
+   *
+   * @param value
+   * @return this.type
+   */
   def setStopBound(value: Double): this.type = {
     stopBound = value
     this
   }
 
-
+  /**
+   * Training the model on training data.
+   *
+   * @param input
+   * @return principle components and loss array
+   */
   def train(input: RDD[Instance]): (Array[Vector], Array[Double]) = {
     val dims = input.first().features.size
     val W0 = new Array[Vector](K)
@@ -50,6 +72,13 @@ class GLS_Matrix_Batch (var stepSize: Double,
   }
 
 
+  /**
+   * Training on training data with initial weights.
+   *
+   * @param input
+   * @param initialWs
+   * @return principle components and loss array
+   */
   def train(input: RDD[Instance], initialWs: Array[Vector]): (Array[Vector], Array[Double]) = {
     if (parts == (-1)) parts = input.partitions.length
     val data = {
@@ -63,7 +92,7 @@ class GLS_Matrix_Batch (var stepSize: Double,
 
 
   /**
-   * the engine, execute the Algorithm scope
+   * the PCA engine, execute the Algorithm of PCA which use iterative optimization process
    *
    * @param data
    * @param initialWs
@@ -80,6 +109,7 @@ class GLS_Matrix_Batch (var stepSize: Double,
     var convergenced = false
 
     val startTime = Calendar.getInstance().getTimeInMillis
+
     /**
      * outer loop
      */
@@ -88,8 +118,6 @@ class GLS_Matrix_Batch (var stepSize: Double,
     var time = 0l
 
     while (i < iters && !convergenced) {
-
-      // stepSize /= Math.sqrt(i+1)
 
       val w = data.context.broadcast(weights)
       var time = Calendar.getInstance().getTimeInMillis
@@ -191,19 +219,27 @@ class GLS_Matrix_Batch (var stepSize: Double,
       time = Calendar.getInstance().getTimeInMillis
     }
     logInfo(s"losses of the last 10 iteration are:${lossArray.takeRight(5).mkString(",")}")
-    //weightsVector = Some(weights)
+
     (weights, lossArray.toArray)
 
   }
 
-
+  /**
+   *
+   * @param lossArray
+   * @return Boolean
+   */
   private[this] def isConvergenced(lossArray:ArrayBuffer[Double]): Boolean = {
     val len = lossArray.length
-    //math.abs(lossArray(len-1) - lossArray(len-2)) < stopBound
     (math.abs(lossArray(len-1) - lossArray(len-2)) < stopBound) && (lossArray(len-1) < lossArray(len-2))
   }
 
-
+  /**
+   *
+   * This method is the implementation of GramSchmidt orthonormalization which is invoked in each inner loop
+   *
+   * @param weights
+   */
   def GramSchmidt(weights:Array[Vector]): Unit = {
     val beta = new Array[Vector](K)
     for(k<-0 to K-1) {

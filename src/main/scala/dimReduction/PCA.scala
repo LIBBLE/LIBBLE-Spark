@@ -12,6 +12,17 @@ import libble.linalg.implicits._
 import org.apache.spark.Logging
 import org.apache.spark.rdd.RDD
 
+/**
+ *
+ * This class is the model of PCA
+ *
+ * @param K
+ * @param bound
+ * @param stepSize
+ * @param iteration
+ * @param parts
+ * @param batchSize
+ */
 
 class PCA(var K: Int,
            var bound: Double,
@@ -24,6 +35,13 @@ class PCA(var K: Int,
   var eigenvalues = new ArrayBuffer[Double]()
   var eigenvectors = new ArrayBuffer[Vector]()
 
+
+  /**
+   *
+   * This method generates the K principle components and their relating eigenvalues
+   *
+   * @param training
+   */
   def train(training: RDD[Instance]): (Array[Double], Array[Vector]) = {
 
     require(K <= training.first().features.size,
@@ -36,9 +54,13 @@ class PCA(var K: Int,
     m.setStopBound(bound)
     val model = m.train(centerData)
 
+    /**
+     * v is the kth principle components
+     * lambda is the kth largest eigenvalues corresponding to v
+     */
     for (k <- 0 to K - 1) {
       val v = model._1(k)
-      val lambda = (1.0 / (centerData.count() - 1)) * centerData.map(x => Math.pow(x.features * v, 2)).reduce(_ + _) // standard: count-1
+      val lambda = (1.0 / (centerData.count() - 1)) * centerData.map(x => Math.pow(x.features * v, 2)).reduce(_ + _)
       eigenvalues.append(lambda)
       eigenvectors.append(v)
     }
@@ -48,6 +70,13 @@ class PCA(var K: Int,
 
   }
 
+  /**
+   *
+   * This method is centralize raw data which is the first step of PCA
+   *
+   * @param data
+   *
+   */
   def centralize(data:RDD[Instance]): RDD[Instance] = {
     val count = data.count()
     val numF = data.first().features.size
@@ -72,6 +101,14 @@ class PCA(var K: Int,
   }
 
 
+  /**
+   *
+   * This method project raw data to new feature space using principle components
+   *
+   * @param rawData
+   * @param pc
+   *
+   */
   def transform(rawData:RDD[Instance], pc:Array[Vector]): RDD[Instance] = {
     val projected = rawData.map{ ins =>
       val arr = new ArrayBuffer[Double]()

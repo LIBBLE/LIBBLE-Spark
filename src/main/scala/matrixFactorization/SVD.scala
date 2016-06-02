@@ -17,7 +17,7 @@ import org.apache.spark.rdd.RDD
 
 
 /**
-  * This is the model of SVD.
+  * This is the model of SVD
   *
   * @param K
   * @param bound
@@ -36,16 +36,28 @@ class SVD(var K: Int,
   var eigenvalues = new ArrayBuffer[Double]()
   var eigenvectors = new ArrayBuffer[Vector]()
 
-  def train(training: RDD[Instance]): (Array[Double], Array[Vector]) = {
 
+  /**
+   *
+   * This method generates singular values matrix and right singular vectors
+   *
+   * @param training
+   */
+  def train(training: RDD[Instance]): (Array[Double], Array[Vector]) = {
     val st = Calendar.getInstance().getTimeInMillis
     val m = new GLS_Matrix_Batch(stepSize, 0.0, 0.0, iteration, parts, batchSize, K)
     m.setStopBound(bound)
     val model = m.train(training)
 
+    /**
+     *
+     * v is the right singular matrix
+     * singular values matrix which is square root of eigenvalues matrix
+     *
+     */
     for (k <- 0 to K - 1) {
       val v = model._1(k)
-      val lambda = training.map(x => Math.pow(x.features * v, 2)).reduce(_ + _) // standard: count-1
+      val lambda = training.map(x => Math.pow(x.features * v, 2)).reduce(_ + _)
       eigenvalues.append(math.sqrt(lambda))
       eigenvectors.append(v)
     }
@@ -53,17 +65,6 @@ class SVD(var K: Int,
     println(s"time to calculate the top ${K} eigen is: " + (Calendar.getInstance().getTimeInMillis - st))
     (eigenvalues.toArray, eigenvectors.toArray)
 
-  }
-
-  def transform(rawData:RDD[Instance], pc:Array[Vector]): RDD[Instance] = {
-    val projected = rawData.map{ ins =>
-      val arr = new ArrayBuffer[Double]()
-      for(k <- pc.indices) {
-        arr.append(ins.features * pc(k))
-      }
-      Instance(ins.label, new DenseVector(arr.toArray))
-    }
-    projected
   }
 
 }
