@@ -1,6 +1,6 @@
 /**
   * Copyright (c) 2016 LIBBLE team supervised by Dr. Wu-Jun LI at Nanjing University.
-
+  *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
   * You may obtain a copy of the License at
@@ -66,6 +66,17 @@ abstract class LossFunc extends Serializable {
 }
 
 
+
+/***The codes of deltaF and deltaFWithLoss has referred mllib.optimization._*****************/
+
+
+
+ */
+
+/**
+  * Logistic Loss.
+  * @param classNum
+  */
 class LogisticLoss(classNum: Int) extends LossFunc {
 
   def this() = this(2)
@@ -271,7 +282,7 @@ class LogisticLoss(classNum: Int) extends LossFunc {
 }
 
 /**
-  *
+  * HingeLoss
   */
 class HingeLoss extends LossFunc {
   /**
@@ -327,7 +338,7 @@ class HingeLoss extends LossFunc {
 }
 
 /**
-  *
+  * least Squared Loss.
   */
 class LeastSquareLoss extends LossFunc {
   /**
@@ -370,3 +381,4 @@ class LeastSquareLoss extends LossFunc {
 }
 
 
+/*****************************************************************************/
