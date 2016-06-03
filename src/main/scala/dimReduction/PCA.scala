@@ -82,7 +82,7 @@ class PCA(var K: Int,
 
   /**
    *
-   * This method is centralize raw data which is the first step of PCA
+   * This method centralizes raw data which is the first step of PCA
    *
    * @param data
    *
@@ -113,7 +113,7 @@ class PCA(var K: Int,
 
   /**
    *
-   * This method project raw data to new feature space using principle components
+   * This method projects raw data to new feature space using principle components
    *
    * @param rawData
    * @param pc

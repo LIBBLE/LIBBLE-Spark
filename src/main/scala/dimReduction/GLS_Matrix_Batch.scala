@@ -61,7 +61,7 @@ class GLS_Matrix_Batch (var stepSize: Double,
   }
 
   /**
-   * Training the model on training data.
+   * Train the model on training data.
    *
    * @param input
    * @return principle components and loss array
@@ -83,7 +83,7 @@ class GLS_Matrix_Batch (var stepSize: Double,
 
 
   /**
-   * Training on training data with initial weights.
+   * Train on training data with initial weights.
    *
    * @param input
    * @param initialWs
@@ -102,7 +102,7 @@ class GLS_Matrix_Batch (var stepSize: Double,
 
 
   /**
-   * the PCA engine, execute the Algorithm of PCA which use iterative optimization process
+   * the PCA optimization engine
    *
    * @param data
    * @param initialWs
