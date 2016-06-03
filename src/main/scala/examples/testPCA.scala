@@ -28,7 +28,7 @@ object testPCA {
     System.setProperty("spark.ui.port", "4042")
     System.setProperty("spark.akka.frameSize", "100")
 
-    val conf = new SparkConf().setAppName("testSVD")
+    val conf = new SparkConf().setAppName("testPCA")
     conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
     conf.set("spark.kryoserializer.buffer.max", "2000m")
     val sc = new SparkContext(conf)
@@ -62,6 +62,7 @@ object testPCA {
     val PCAModel = mypca.train(training)
 
     val pc = PCAModel._2
+    pc.foreach(x=>println(x))
     val projected = mypca.transform(training, pc)
     projected.collect().foreach(x=>println(x.features))
 
