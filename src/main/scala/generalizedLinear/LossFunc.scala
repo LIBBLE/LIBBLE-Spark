@@ -1,6 +1,6 @@
 /**
   * Copyright (c) 2016 LIBBLE team supervised by Dr. Wu-Jun LI at Nanjing University.
-
+  * All Rights Reserved.
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
   * You may obtain a copy of the License at
@@ -65,7 +65,13 @@ abstract class LossFunc extends Serializable {
   }
 }
 
-
+/**
+  * ******************Codes bellow has referrence to mllib.optimization._
+  */
+/**
+  * Here we defined the logistic Loss
+  * @param classNum
+  */
 class LogisticLoss(classNum: Int) extends LossFunc {
 
   def this() = this(2)
@@ -271,7 +277,7 @@ class LogisticLoss(classNum: Int) extends LossFunc {
 }
 
 /**
-  *
+  *Here we defined the hinge Loss
   */
 class HingeLoss extends LossFunc {
   /**
@@ -327,7 +333,7 @@ class HingeLoss extends LossFunc {
 }
 
 /**
-  *
+  *Here we defined the least square Loss
   */
 class LeastSquareLoss extends LossFunc {
   /**
@@ -370,3 +376,4 @@ class LeastSquareLoss extends LossFunc {
 }
 
 
+/*************************************************************************************/
