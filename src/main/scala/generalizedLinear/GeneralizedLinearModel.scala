@@ -74,7 +74,7 @@ class GeneralizedLinearModel(var stepSize: Double,
   }
 
   /**
-    * set add Bias or not.
+    * Set add Bias or not.
     *
     * @param value
     * @return this.type
@@ -96,7 +96,7 @@ class GeneralizedLinearModel(var stepSize: Double,
   }
 
   /**
-    * set the lossfunc
+    * Set the lossfunc
     *
     * @param loss
     * @return this
@@ -107,7 +107,7 @@ class GeneralizedLinearModel(var stepSize: Double,
   }
 
   /**
-    * set the Regularizer
+    * Set the Regularizer
     *
     * @param reg
     * @return this
@@ -118,7 +118,7 @@ class GeneralizedLinearModel(var stepSize: Double,
   }
 
   /**
-    * set the stepSize
+    * Set the stepSize
     *
     * @param value
     * @return this
@@ -129,7 +129,7 @@ class GeneralizedLinearModel(var stepSize: Double,
   }
 
   /**
-    * set the factor
+    * Set the factor
     *
     * @param value
     * @return this
@@ -140,7 +140,7 @@ class GeneralizedLinearModel(var stepSize: Double,
   }
 
   /**
-    * set the stepSize
+    * Set the iterations
     *
     * @param value
     * @return this
@@ -151,7 +151,7 @@ class GeneralizedLinearModel(var stepSize: Double,
   }
 
   /**
-    * set the RegParam
+    * Set the RegParam
     *
     * @param value
     * @return this
@@ -162,7 +162,7 @@ class GeneralizedLinearModel(var stepSize: Double,
   }
 
   /**
-    * set the data's Parts
+    * Set the data's Parts
     *
     * @param value
     * @return this
@@ -174,7 +174,7 @@ class GeneralizedLinearModel(var stepSize: Double,
 
 
   /**
-    * set the classNum
+    * Set the classNum
     *
     * @param classNum
     * @return this
@@ -234,7 +234,7 @@ class GeneralizedLinearModel(var stepSize: Double,
   }
 
   /**
-    * Engine.
+    * Optimization engine.
     * @param data
     * @param initialWeights
     * @return lossArray

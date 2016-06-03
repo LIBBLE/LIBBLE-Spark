@@ -20,6 +20,9 @@ import org.apache.spark.{SparkConf, SparkContext}
 
 import scala.collection.mutable
 
+/**
+* This is an example of using SVD.
+*/
 object testSVD {
   def main(args: Array[String]): Unit = {
     Logger.getLogger("org.apache.spark").setLevel(Level.WARN)

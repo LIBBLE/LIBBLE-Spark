@@ -22,7 +22,7 @@ import scala.beans.BeanProperty
 
 
 /**
-  * With this class, we scal the data to standard normal space in feature-wise.
+  * With this class, we scale the data to standard normal space in feature-wise.
   * @param centerlized
   * @param scalStd
   */
@@ -32,7 +32,7 @@ class Scaller(var centerlized: Boolean = false, var scalStd: Boolean = true) ext
   @BeanProperty var std: Option[Vector] = None
 
   /**
-    * compute center or std of the data.
+    * Compute center or std of the data.
     * @param data
     */
   def computeFactor(data: RDD[Vector]): Unit = (centerlized, scalStd) match {
@@ -136,7 +136,7 @@ class Scaller(var centerlized: Boolean = false, var scalStd: Boolean = true) ext
   }
 
   /**
-    *   Transform the data : Vector with the factors
+    *   Transform the data : Vector with the factors.
     */
   def transform(data: Vector): Vector = {
     val panning: (Vector => Vector) = data match {

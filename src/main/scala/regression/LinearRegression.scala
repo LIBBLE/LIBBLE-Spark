@@ -35,7 +35,7 @@ class LinearRegression(stepSize: Double,
   setRegularizer(new L1Reg())
 
   /**
-    * output the predict value.
+    * Set the output to be the predict value.
     */
   clearThreshold
 

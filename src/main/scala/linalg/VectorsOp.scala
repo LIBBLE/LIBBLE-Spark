@@ -17,12 +17,12 @@ package libble.linalg
 import scala.collection.mutable.ArrayBuffer
 
 /**
-  * Using with the implicit method, add fuctions to the Vectors.
+  * Using with the implicit method, add methods to the Vectors.
   * @param vec
   */
 class VectorsOp(val vec: Vector) {
   /**
-    * compute the inner product of two vectors
+    * Compute the inner product of two vectors.
     * vec*yT
     *
     * @param y
@@ -32,7 +32,7 @@ class VectorsOp(val vec: Vector) {
   def *(y: Vector): Double = dot(y)
 
   /**
-    * compute the inner product of two vectors
+    * Compute the inner product of two vectors.
     * x*yT
     *
     * @param y
@@ -50,8 +50,9 @@ class VectorsOp(val vec: Vector) {
   }
 
   /**
+    *
+    * Compute the inner product of two sparse vectors.
     * x*yT
-    * compute the inner product of two sparse vectors
     *
     * @param x
     * @param y
@@ -83,9 +84,10 @@ class VectorsOp(val vec: Vector) {
   }
 
   /**
-    * x*yT
-    * compute the inner product of one spartse vector and one dense vector
     *
+    * Compute the inner product of one spartse vector and one dense vector.
+    * x*yT
+   *
     * @param x
     * @param y
     * @return inner product
@@ -104,9 +106,10 @@ class VectorsOp(val vec: Vector) {
   }
 
   /**
-    * x*yT
-    * compute inner product of two dense vector
     *
+    * Compute inner product of two dense vector.
+    * x*yT
+   *
     * @param x
     * @param y
     * @return inner product
@@ -125,7 +128,7 @@ class VectorsOp(val vec: Vector) {
 
 
   /**
-    * compute DenseVector plus DenseVector
+    * Compute DenseVector plus DenseVector.
     *
     * @param dx
     * @param dy
@@ -188,7 +191,7 @@ class VectorsOp(val vec: Vector) {
   }
 
   /**
-    * compute this plus y
+    * Compute this plus y.
     *
     * @param y
     * @return new Vector
@@ -287,7 +290,7 @@ class VectorsOp(val vec: Vector) {
 
 
   /**
-    * add a*x to vector y
+    * Add a*x to vector y
     * y += a * x
     *
     * @param a
@@ -317,7 +320,7 @@ class VectorsOp(val vec: Vector) {
 
 
   /**
-    * add a*x to vector y
+    * Add a*x to vector y
     * y += a * x
     *
     * @param a
@@ -349,7 +352,7 @@ class VectorsOp(val vec: Vector) {
   }
 
   /**
-    * add a*x to vector y
+    * Add a*x to vector y
     * y += a * x
     *
     * @param a
@@ -380,7 +383,7 @@ class VectorsOp(val vec: Vector) {
   }
 
   /**
-    * scal each element of vector x with factor a
+    * Scale each element of vector x with factor a.
     *
     * @param a
     */
@@ -390,7 +393,7 @@ class VectorsOp(val vec: Vector) {
 
 
   /**
-    * scal each element of vector x with factor a
+    * Scale each element of vector x with factor a.
     *
     * @param a
     */
@@ -400,7 +403,7 @@ class VectorsOp(val vec: Vector) {
   }
 
   /**
-    * scal each element of sparse vector x with factor a
+    * Scale each element of sparse vector x with factor a.
     *
     * @param a
     * @param x
@@ -416,7 +419,7 @@ class VectorsOp(val vec: Vector) {
   }
 
   /**
-    * scal each element of dense vector x with factor a
+    * Scale each element of dense vector x with factor a.
     *
     * @param a
     * @param x
@@ -498,7 +501,7 @@ class VectorsOp(val vec: Vector) {
 
 
   /**
-    * compute the L1 norm of the vec
+    * Compute the L1 norm of the vec.
     *
     * @return
     */
@@ -513,7 +516,7 @@ class VectorsOp(val vec: Vector) {
   }
 
   /**
-    * compute the L2 norm of the vec
+    * Compute the L2 norm of the vec.
     *
     * @return
     */
@@ -529,7 +532,7 @@ class VectorsOp(val vec: Vector) {
 
 
   /**
-    *
+    * Append one bit to a vector with the value equals 1.
     * @return
     */
   def appendBias(): Vector = vec match {

@@ -17,7 +17,7 @@ package libble.context
 import libble.linalg.Vector
 
 /**
-  * This class is used to denote one term of the training or testing data, which is consisted of
+  * This class is used to denote one term of the training or testing data, which consists of
   * one label and one Vector.
   * @param label
   * @param features

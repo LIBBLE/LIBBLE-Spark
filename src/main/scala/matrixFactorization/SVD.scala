@@ -49,7 +49,7 @@ class SVD(var K: Int,
 
   /**
    *
-   * This method generates singular values matrix and right singular vectors
+   * This method generates singular values matrix and right singular vectors.
    *
    * @param training
    */
@@ -62,7 +62,7 @@ class SVD(var K: Int,
     /**
      *
      * v is the right singular matrix
-     * singular values matrix which is square root of eigenvalues matrix
+     * Singular values matrix which is square root of eigenvalues matrix.
      *
      */
     for (k <- 0 to K - 1) {

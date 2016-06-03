@@ -23,42 +23,42 @@ sealed trait Vector extends Serializable {
 
 
   /**
-    * get the i-th element
+    * Get the i-th element
     *
     * @param i
     * @return double
     */
   def apply(i: Int): Double
 
-  /** length
+  /** Length
     *
     * @return number of elements
     */
   def size: Int
 
   /**
-    * return a copy of this
+    * Return a copy of this.
     *
     * @return new copy
     */
   def copy: Vector
 
   /**
-    * apply function on each item
+    * Apply function on each item.
     *
     * @param f
     */
   def foreachActive(f: (Int, Double) => Unit)
 
   /**
-    * return the number of nonzero elements
+    * Return the number of nonzero elements.
     *
     * @return nnz
     */
   def nnz: Int
 
   /**
-    * convert the vector to an array
+    * Convert the vector to an array.
     *
     * @return array
     */
@@ -68,13 +68,13 @@ sealed trait Vector extends Serializable {
 }
 
 /**
-  * class of Dense Vector.
+  * Class of Dense Vector.
   * @param values
   */
 case class DenseVector(val values: Array[Double]) extends Vector {
 
   /**
-    * initialize a DenseVector with all elements are zero
+    * Initialize a DenseVector with all elements zero.
     *
     * @param size
     * @return
@@ -86,7 +86,7 @@ case class DenseVector(val values: Array[Double]) extends Vector {
   }
 
   /**
-    * return the i-th element
+    * Return the i-th element.
     *
     * @param i
     * @return double
@@ -95,7 +95,7 @@ case class DenseVector(val values: Array[Double]) extends Vector {
 
 
   /**
-    * return a copy of this
+    * Return a copy of this.
     *
     * @return new copy
     */
@@ -104,7 +104,7 @@ case class DenseVector(val values: Array[Double]) extends Vector {
   }
 
   /**
-    * return a copy of this vector
+    * Return a copy of this vector.
     *
     * @return copy
     */
@@ -113,7 +113,7 @@ case class DenseVector(val values: Array[Double]) extends Vector {
   }
 
   /**
-    * return the hashcode of this vector
+    * Return the hashcode of this vector.
     *
     * @return
     */
@@ -129,7 +129,7 @@ case class DenseVector(val values: Array[Double]) extends Vector {
   }
 
   /**
-    * return the number of nonzero elements
+    * Return the number of nonzero elements.
     *
     * @return nnz
     */
@@ -144,21 +144,21 @@ case class DenseVector(val values: Array[Double]) extends Vector {
     num
   }
 
-  /** length
+  /** Length
     *
     * @return number of elements
     */
   override def size: Int = values.length
 
   /**
-    * convert the vector to an array
+    * Convert the vector to an array.
     *
     * @return array
     */
   override def toArray: Array[Double] = values
 
   /**
-    * convert this vector to a string
+    * Convert this vector to a string.
     *
     * @return
     */
@@ -167,7 +167,7 @@ case class DenseVector(val values: Array[Double]) extends Vector {
   }
 
   /**
-    * apply function on each item
+    * Apply function on each item.
     *
     * @param f
     */
@@ -191,14 +191,14 @@ case class SparseVector(val indices: Array[Int], val values: Array[Double], dim:
 
 
   /**
-    * return the active size of element
+    * Return the active size of element.
     *
     * @return active size
     */
   def activeSize: Int = indices.length
 
   /**
-    * get the i-th element of this vector
+    * get the i-th element of this vector.
     *
     * @param i
     * @return double
@@ -216,7 +216,7 @@ case class SparseVector(val indices: Array[Int], val values: Array[Double], dim:
   }
 
   /**
-    * return a copy of this
+    * Return a copy of this.
     *
     * @return new copy
     */
@@ -225,7 +225,7 @@ case class SparseVector(val indices: Array[Int], val values: Array[Double], dim:
   }
 
   /**
-    * return a copy of this vector
+    * Return a copy of this vector.
     *
     * @return copy
     */
@@ -234,7 +234,7 @@ case class SparseVector(val indices: Array[Int], val values: Array[Double], dim:
   }
 
   /**
-    * return the hashcode of this vector
+    * Return the hashcode of this vector.
     *
     * @return Int hashcode
     */
@@ -250,7 +250,7 @@ case class SparseVector(val indices: Array[Int], val values: Array[Double], dim:
   }
 
   /**
-    * return the number of nonzero elements
+    * Return the number of nonzero elements.
     *
     * @return nnz
     */
@@ -266,14 +266,14 @@ case class SparseVector(val indices: Array[Int], val values: Array[Double], dim:
   }
 
   /**
-    * length
+    * Length
     *
     * @return number of elements
     */
   override def size: Int = dim
 
   /**
-    * convert the vector to an array
+    * Convert the vector to an array.
     *
     * @return array
     */
@@ -289,7 +289,7 @@ case class SparseVector(val indices: Array[Int], val values: Array[Double], dim:
   }
 
   /**
-    * convert the vector to a string
+    * Convert the vector to a string.
     *
     * @return string
     */
@@ -298,7 +298,7 @@ case class SparseVector(val indices: Array[Int], val values: Array[Double], dim:
   }
 
   /**
-    * apply function on each item
+    * Apply function on each item.
     *
     * @param f
     */

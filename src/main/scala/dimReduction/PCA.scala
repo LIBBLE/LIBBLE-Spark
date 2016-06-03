@@ -24,7 +24,7 @@ import org.apache.spark.rdd.RDD
 
 /**
  *
- * This class is the model of PCA
+ * This class is the model of PCA.
  *
  * @param K
  * @param bound
@@ -48,7 +48,7 @@ class PCA(var K: Int,
 
   /**
    *
-   * This method generates the K principle components and their relating eigenvalues
+   * This method generates the K principle components and their relating eigenvalues.
    *
    * @param training
    */
@@ -65,8 +65,8 @@ class PCA(var K: Int,
     val model = m.train(centerData)
 
     /**
-     * v is the kth principle components
-     * lambda is the kth largest eigenvalues corresponding to v
+     * v is the kth principle components.
+     * lambda is the kth largest eigenvalues corresponding to v.
      */
     for (k <- 0 to K - 1) {
       val v = model._1(k)
@@ -82,7 +82,7 @@ class PCA(var K: Int,
 
   /**
    *
-   * This method centralizes raw data which is the first step of PCA
+   * This method centralizes raw data which is the first step of PCA.
    *
    * @param data
    *
@@ -113,7 +113,7 @@ class PCA(var K: Int,
 
   /**
    *
-   * This method projects raw data to new feature space using principle components
+   * This method projects raw data to new feature space using principle components.
    *
    * @param rawData
    * @param pc

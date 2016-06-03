@@ -22,7 +22,7 @@ import libble.linalg.implicits._
   */
 abstract class Regularizer extends Serializable {
   /**
-    * In this method, we update the weight with weightnew= weightOld+stepSize*(gradient+regParam*  delte(regularizer)).
+    * In this method, we update the weight with weightnew=weightOld+stepSize*(gradient+regParam*delte(regularizer)).
     * Where delta(regularizer) is the gradient of regularizer.
     *
     * @param weights
@@ -34,7 +34,7 @@ abstract class Regularizer extends Serializable {
   def update(weights: Vector, gradient: Vector, stepSize: Double, regParam: Double): Unit
 
   /**
-    * In this method, we give the cost of the regularizer
+    * In this method, we give the cost of the regularizer.
     *
     * @param weight
     * @param regParam
@@ -131,7 +131,7 @@ class L2Reg extends Regularizer {
   }
 
   /**
-    * In this method, we give the cost of the regularizer
+    * In this method, we give the cost of the regularizer.
     *
     * @param weight
     * @param regParam

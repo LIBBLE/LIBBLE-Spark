@@ -20,7 +20,9 @@ import org.apache.spark.{SparkContext, SparkConf}
 
 import scala.collection.mutable
 
-
+/**
+* This is an example of using PCA.
+*/
 object testPCA {
   def main(args: Array[String]): Unit = {
     Logger.getLogger("org.apache.spark").setLevel(Level.WARN)
@@ -58,13 +60,13 @@ object testPCA {
     import libble.context.implicits._
     val training = sc.loadLIBBLEFile(args(0))
 
-    val mypca = new PCA(K, bound, stepSize, numIters, numPart, batchSize)       //matrix, altogether update eigens
+    val mypca = new PCA(K, bound, stepSize, numIters, numPart, batchSize) //matrix, altogether update eigens
     val PCAModel = mypca.train(training)
 
     val pc = PCAModel._2
-    pc.foreach(x=>println(x))
+    pc.foreach(x => println(x))
     val projected = mypca.transform(training, pc)
-    projected.collect().foreach(x=>println(x.features))
+    projected.collect().foreach(x => println(x.features))
 
   }
 }

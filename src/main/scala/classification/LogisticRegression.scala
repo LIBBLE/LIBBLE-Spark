@@ -36,12 +36,12 @@ class LogisticRegression(stepSize: Double,
 
 
   /**
-    * default threshold is 0.5.
+    * Default threshold is 0.5.
     */
   setThreshold(0.5)
 
   /**
-    * set the classNum
+    * Set the classNum
     *
     * @param classNum
     * @return this

@@ -17,7 +17,7 @@ package libble.examples
 import org.apache.spark.{SparkConf, SparkContext}
 
 /***
-  * here we test the function of loadlibSVMFile and loadLIBBLEFile, the class  LibContext pass
+  * Here we test the function of loadlibSVMFile and loadLIBBLEFile.
   */
 object LoadFile {
   def main(args: Array[String]) {

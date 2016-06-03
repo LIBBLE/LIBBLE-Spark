@@ -18,7 +18,7 @@ import libble.features.Scaller
 import org.apache.spark.{SparkConf, SparkContext}
 
 /**
-  * This is the example of using SVD.
+  * This is an example of using Scaller.
   */
 object testScaller {
   def main(args: Array[String]) {

@@ -18,10 +18,10 @@ import libble.linalg.{DenseVector, Vector}
 import libble.linalg.implicits._
 
 /**
-  * In this class, you should give your own function's gradient.
+  * In this class, you should give your own gradient of function.
   * We give some instances of different losses.
-  * If you want to run optimization on your own function, you should extends
-  * this class, and override the function compute, give the gradient or gradient factor here.
+  * If you want to run optimization on your own function, you should extend
+  * this class, and override functions.
   */
 abstract class LossFunc extends Serializable {
   /**
@@ -48,7 +48,7 @@ abstract class LossFunc extends Serializable {
   def deltaFWithLoss(data: Vector, label: Double, weights: Vector): (Vector, Double)
 
   /**
-    * Give the pridict on data with the weights
+    * Give the prediction on data with the weights.
     *
     * @param data
     * @param weights
@@ -66,10 +66,10 @@ abstract class LossFunc extends Serializable {
 }
 
 /**
-  * ******************Codes bellow has referrence to mllib.optimization._
+  * ******************Codes bellow has reference to mllib.optimization._
   */
 /**
-  * Here we defined the logistic Loss
+  * Here we defined the logistic Loss.
   * @param classNum
   */
 class LogisticLoss(classNum: Int) extends LossFunc {
@@ -241,7 +241,7 @@ class LogisticLoss(classNum: Int) extends LossFunc {
   }
 
   /**
-    * Give the pridict on data with the weights
+    * Give the prediction on data with the weights.
     *
     * @param data
     * @param weights
@@ -277,7 +277,7 @@ class LogisticLoss(classNum: Int) extends LossFunc {
 }
 
 /**
-  *Here we defined the hinge Loss
+  * Here we defined the hinge Loss
   */
 class HingeLoss extends LossFunc {
   /**
@@ -321,7 +321,7 @@ class HingeLoss extends LossFunc {
   }
 
   /**
-    * Give the pridict on data with the weights
+    * Give the prediction on data with the weights
     *
     * @param data
     * @param weights
@@ -333,7 +333,7 @@ class HingeLoss extends LossFunc {
 }
 
 /**
-  *Here we defined the least square Loss
+  * Here we defined the least square Loss.
   */
 class LeastSquareLoss extends LossFunc {
   /**
@@ -364,7 +364,7 @@ class LeastSquareLoss extends LossFunc {
   }
 
   /**
-    * Give the pridict on data with the weights
+    * Give the prediction on data with the weights.
     *
     * @param data
     * @param weights

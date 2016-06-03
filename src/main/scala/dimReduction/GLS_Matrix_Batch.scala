@@ -28,7 +28,7 @@ import org.apache.spark.rdd.RDD
 
 /**
  *
- * This class is the Generalized Linear Algorithms for PCA model which uses mini-batch strategy during optimization process
+ * This class is the Generalized Linear Algorithms for PCA model which uses mini-batch strategy during optimization process.
  *
  * @param stepSize
  * @param regParam
@@ -51,6 +51,7 @@ class GLS_Matrix_Batch (var stepSize: Double,
   var weightsVector: Option[Vector] = None
 
   /**
+   * Set the stop bound.
    *
    * @param value
    * @return this.type
@@ -102,7 +103,7 @@ class GLS_Matrix_Batch (var stepSize: Double,
 
 
   /**
-   * the PCA optimization engine
+   * The PCA optimization engine.
    *
    * @param data
    * @param initialWs
@@ -235,6 +236,7 @@ class GLS_Matrix_Batch (var stepSize: Double,
   }
 
   /**
+   * Judge whether the convergence condition is satisfied.
    *
    * @param lossArray
    * @return Boolean
@@ -246,7 +248,7 @@ class GLS_Matrix_Batch (var stepSize: Double,
 
   /**
    *
-   * This method is the implementation of GramSchmidt orthonormalization which is invoked in each inner loop
+   * This method is the implementation of GramSchmidt orthonormalization which is invoked in each inner loop.
    *
    * @param weights
    */

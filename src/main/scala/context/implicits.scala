@@ -28,7 +28,7 @@ object implicits {
 }
 
 /**
-  * This class includes the methods of load LIBBLEFILE from the file system.
+  * This class includes the methods of loading LIBBLEFILE from the file system.
   *
   * @param sc
   */
@@ -128,7 +128,7 @@ class LibContext(val sc: SparkContext) {
 
 
 /**
-  * With this class,we add save data method to the RDD[Instance].
+  * With this class, we add save-data methods to the RDD[Instance].
   *
   * @param data
   */
