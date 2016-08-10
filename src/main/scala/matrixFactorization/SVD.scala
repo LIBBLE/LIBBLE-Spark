@@ -53,7 +53,7 @@ class SVD(var K: Int,
    *
    * @param training
    */
-  def train(training: RDD[Instance]): (Array[Double], Array[Vector]) = {
+  def train(training: RDD[Vector]): (Array[Double], Array[Vector]) = {
     val st = Calendar.getInstance().getTimeInMillis
     val m = new GLS_Matrix_Batch(stepSize, 0.0, 0.0, iteration, parts, batchSize, K)
     m.setStopBound(bound)
@@ -67,7 +67,7 @@ class SVD(var K: Int,
      */
     for (k <- 0 to K - 1) {
       val v = model._1(k)
-      val lambda = training.map(x => Math.pow(x.features * v, 2)).reduce(_ + _)
+      val lambda = training.map(x => Math.pow(x * v, 2)).reduce(_ + _)
       eigenvalues.append(math.sqrt(lambda))
       eigenvectors.append(v)
     }
