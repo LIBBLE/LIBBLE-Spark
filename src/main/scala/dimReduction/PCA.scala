@@ -52,10 +52,10 @@ class PCA(var K: Int,
    *
    * @param training
    */
-  def train(training: RDD[Instance]): (Array[Double], Array[Vector]) = {
+  def train(training: RDD[Vector]): (Array[Double], Array[Vector]) = {
 
-    require(K <= training.first().features.size,
-      s"data dimension size is ${training.first().features.size}, it must be greater than K=$K")
+    require(K <= training.first().size,
+      s"data dimension size is ${training.first().size}, it must be greater than K=$K")
 
     val centerData = centralize(training)
 
@@ -70,7 +70,7 @@ class PCA(var K: Int,
      */
     for (k <- 0 to K - 1) {
       val v = model._1(k)
-      val lambda = (1.0 / (centerData.count() - 1)) * centerData.map(x => Math.pow(x.features * v, 2)).reduce(_ + _)
+      val lambda = (1.0 / (centerData.count() - 1)) * centerData.map(x => Math.pow(x * v, 2)).reduce(_ + _)
       eigenvalues.append(lambda)
       eigenvectors.append(v)
     }
@@ -87,12 +87,12 @@ class PCA(var K: Int,
    * @param data
    *
    */
-  def centralize(data:RDD[Instance]): RDD[Instance] = {
+  def centralize(data:RDD[Vector]): RDD[Vector] = {
     val count = data.count()
-    val numF = data.first().features.size
+    val numF = data.first().size
     val average = data.treeAggregate(new DenseVector(numF))(
       seqOp = (c, v) => {
-        c += v.features
+        c += v
         c
       }, combOp = (c1, c2) => {
         c2 += c1
@@ -103,11 +103,11 @@ class PCA(var K: Int,
     val aver = data.context.broadcast(average)
 
     val panedData = data.map { e =>
-      val newFeatures = new DenseVector(e.features.toArray)
+      val newFeatures = new DenseVector(e.toArray)
       newFeatures -= aver.value
-      new Instance(e.label, newFeatures)
+
     }
-    panedData
+    panedData.map(_.asInstanceOf[Vector])
   }
 
 
@@ -119,13 +119,13 @@ class PCA(var K: Int,
    * @param pc
    *
    */
-  def transform(rawData:RDD[Instance], pc:Array[Vector]): RDD[Instance] = {
+  def transform(rawData:RDD[Vector], pc:Array[Vector]): RDD[DenseVector] = {
     val projected = rawData.map{ ins =>
       val arr = new ArrayBuffer[Double]()
       for(k <- pc.indices) {
-        arr.append(ins.features * pc(k))
+        arr.append(ins* pc(k))
       }
-      Instance(ins.label, new DenseVector(arr.toArray))
+       new DenseVector(arr.toArray)
     }
     projected
   }

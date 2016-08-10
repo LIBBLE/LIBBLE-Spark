@@ -67,8 +67,8 @@ class GLS_Matrix_Batch (var stepSize: Double,
    * @param input
    * @return principle components and loss array
    */
-  def train(input: RDD[Instance]): (Array[Vector], Array[Double]) = {
-    val dims = input.first().features.size
+  def train(input: RDD[Vector]): (Array[Vector], Array[Double]) = {
+    val dims = input.first().size
     val W0 = new Array[Vector](K)
     for(i<-0 to K-1) {
       val arr = new Array[Double](dims)
@@ -90,13 +90,13 @@ class GLS_Matrix_Batch (var stepSize: Double,
    * @param initialWs
    * @return principle components and loss array
    */
-  def train(input: RDD[Instance], initialWs: Array[Vector]): (Array[Vector], Array[Double]) = {
+  def train(input: RDD[Vector], initialWs: Array[Vector]): (Array[Vector], Array[Double]) = {
     if (parts == (-1)) parts = input.partitions.length
     val data = {
       if (parts == input.partitions.length)
-        input.map(e => (e.label, e.features)).cache()
+        input.cache()
       else
-        input.map(e => (e.label, e.features)).coalesce(parts, true).cache()
+        input.coalesce(parts, true).cache()
     }
     runEngine(data, initialWs)
   }
@@ -109,7 +109,7 @@ class GLS_Matrix_Batch (var stepSize: Double,
    * @param initialWs
    * @return
    */
-  private[this] def runEngine(data: RDD[(Double, Vector)], initialWs: Array[Vector]): (Array[Vector], Array[Double]) = {
+  private[this] def runEngine(data: RDD[Vector], initialWs: Array[Vector]): (Array[Vector], Array[Double]) = {
 
     val K = initialWs.length
     val count = data.count()
@@ -140,9 +140,9 @@ class GLS_Matrix_Batch (var stepSize: Double,
         seqOp = (c, v) => {
           var lossTemp = 0.0
           for(k<-0 to K-1) {
-            val inner = v._2 * w.value(k)
+            val inner = v * w.value(k)
             val loss = -1.0*inner*inner
-            c._1(k).plusax(inner, v._2)
+            c._1(k).plusax(inner, v)
             c._3(k) += loss
             lossTemp += loss
           }
@@ -191,9 +191,9 @@ class GLS_Matrix_Batch (var stepSize: Double,
           for (b <- 1 to batchSize) {
             val e = indexSeq(Random.nextInt(pNum))
             for(k<-0 to K-1) {
-              val f1 = e._2 * omiga(k)
-              val f2 = e._2 * w_0.value(k)
-              delta(k).plusax(f1-f2, e._2)
+              val f1 = e* omiga(k)
+              val f2 = e* w_0.value(k)
+              delta(k).plusax(f1-f2, e)
             }
           }
 
