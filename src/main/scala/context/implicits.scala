@@ -41,7 +41,7 @@ class LibContext(val sc: SparkContext) {
     * @deprecated replaced by function loadLibSVMFile
     */
   def loadLibSVMFile(path: String): RDD[Instance] = {
-    loadLibSVMFile(path, sc.defaultMinPartitions)
+    loadLibSVMFile(path, -1)
   }
 
   /**
@@ -53,8 +53,9 @@ class LibContext(val sc: SparkContext) {
     * @deprecated replaced by function loadLibSVMFile
     */
   def loadLibSVMFile(path: String, partsNum: Int): RDD[Instance] = {
-    val lines = sc.textFile(path, partsNum)
-      .map(_.trim)
+    val lines = {
+      if (partsNum > 0) sc.textFile(path, partsNum) else sc.textFile(path)
+    }.map(_.trim)
       .filter(line => !(line.isEmpty || line.startsWith("#")))
     val terms = lines.filter(_.split(" ").length != 1).map { line =>
       val items = line.split(" ")
