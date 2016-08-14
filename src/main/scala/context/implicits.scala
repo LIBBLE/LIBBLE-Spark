@@ -60,7 +60,7 @@ class LibContext(val sc: SparkContext) {
     val terms = lines.filter(_.split(" ").length != 1).map { line =>
       val items = line.split(" ")
       val label = items.head.toDouble
-      val term = items.tail.filter(!_.isEmpty).map { item =>
+      val term = items.tail.filter(_.nonEmpty).map { item =>
         val temp = item.split(":")
         (temp.head.toInt - 1, temp.last.toDouble)
       }.unzip
@@ -107,7 +107,7 @@ class LibContext(val sc: SparkContext) {
             val temp = item.split(':')
             (temp.head.toInt - 1, temp.last.toDouble)
           }.unzip
-          (label, term._1.toArray, term._2.toArray)
+          (label, term._1, term._2)
         }.cache()
 
         val d = terms.map(_._2.lastOption.getOrElse(0)).reduce(math.max) + 1
