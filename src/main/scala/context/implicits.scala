@@ -69,7 +69,7 @@ class LibContext(val sc: SparkContext) {
     val d = terms.map(_._2.lastOption.getOrElse(0))
       .reduce(math.max) + 1
     terms.map { term =>
-      new Instance(term._1, new SparseVector(term._2, term._3, d))
+      new Instance(term._1, new SparseVector(term._2.toArray, term._3.toArray, d))
 
     }
   }
@@ -112,7 +112,7 @@ class LibContext(val sc: SparkContext) {
 
         val d = terms.map(_._2.lastOption.getOrElse(0)).reduce(math.max) + 1
         terms.map { term =>
-          new Instance(term._1, new SparseVector(term._2, term._3, d))
+          new Instance(term._1, new SparseVector(term._2.toArray, term._3.toArray, d))
         }
       }
       case false => {
