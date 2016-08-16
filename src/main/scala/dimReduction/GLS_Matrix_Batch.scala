@@ -140,7 +140,7 @@ class GLS_Matrix_Batch (var stepSize: Double,
         seqOp = (c, v) => {
           var lossTemp = 0.0
           for(k<-0 to K-1) {
-            val inner = v * w.value(k)
+            val inner = v* w.value(k)
             val loss = -1.0*inner*inner
             c._1(k).plusax(inner, v)
             c._3(k) += loss
@@ -191,8 +191,8 @@ class GLS_Matrix_Batch (var stepSize: Double,
           for (b <- 1 to batchSize) {
             val e = indexSeq(Random.nextInt(pNum))
             for(k<-0 to K-1) {
-              val f1 = e* omiga(k)
-              val f2 = e* w_0.value(k)
+              val f1 = e * omiga(k)
+              val f2 = e * w_0.value(k)
               delta(k).plusax(f1-f2, e)
             }
           }

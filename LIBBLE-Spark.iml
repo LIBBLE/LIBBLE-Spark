@@ -7,7 +7,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="scala-sdk-2.10.5" level="application" />
-    <orderEntry type="library" name="spark-assembly-1.5.2-hadoop2.6.0" level="application" />
+    <orderEntry type="library" name="scala-sdk-2.11.8" level="application" />
+    <orderEntry type="library" name="spark-assembly-1.6.1-hadoop2.6.0" level="project" />
   </component>
 </module>
