@@ -444,7 +444,7 @@ class VectorsOp(val vec: Vector) {
 
   /**
     *
-    * x^T*y
+    * xT*y
     * @param y
     * @return
     */
