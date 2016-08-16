@@ -14,13 +14,14 @@
   * limitations under the License. */
 package libble.dimReduction
 
-import scala.collection.mutable.ArrayBuffer
 import java.util.Calendar
-import libble.context.Instance
-import libble.linalg.{DenseVector, Vector}
+
 import libble.linalg.implicits._
+import libble.linalg.{DenseVector, Vector}
 import org.apache.spark.Logging
 import org.apache.spark.rdd.RDD
+
+import scala.collection.mutable.ArrayBuffer
 
 /**
   *
