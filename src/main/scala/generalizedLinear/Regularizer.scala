@@ -94,7 +94,7 @@ class L1Reg extends Regularizer {
     val weightsValues = weights.toArray
     var offset = 0
     while (offset < weights.size) {
-      weightsValues(offset) = math.signum(weightsValues(offset)) * math.max(0.0, math.abs(weightsValues(offset) - reg_step))
+      weightsValues(offset) = math.signum(weightsValues(offset)) * math.max(0.0, math.abs(weightsValues(offset)) - reg_step)
       offset += 1
     }
   }
