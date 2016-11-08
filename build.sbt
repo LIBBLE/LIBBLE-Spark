@@ -1,9 +1,9 @@
 
 name := "LIBBLE-Spark"
 
-version := "0.0.1"
+version := "1.0.1"
 
-scalaVersion := "2.10.5"
+scalaVersion := "2.11.7"
 
 artifactName := { (sv: ScalaVersion, module: ModuleID, artifact: Artifact) =>
   artifact.name + "-" + module.revision + "." + artifact.extension
