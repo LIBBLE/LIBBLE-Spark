@@ -19,7 +19,6 @@ import java.util.Calendar
 import libble.dimReduction.GLS_Matrix_Batch
 import libble.linalg.Vector
 import libble.linalg.implicits._
-import org.apache.spark.Logging
 import org.apache.spark.rdd.RDD
 
 import scala.collection.mutable.ArrayBuffer
@@ -41,7 +40,7 @@ class SVD(var K: Int,
           var stepSize: Double,
           var iteration: Int,
           var parts: Int,
-          var batchSize: Int) extends Logging with Serializable {
+          var batchSize: Int) extends Serializable {
   var eigenvalues = new ArrayBuffer[Double]()
   var eigenvectors = new ArrayBuffer[Vector]()
 

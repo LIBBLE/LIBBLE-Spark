@@ -18,7 +18,6 @@ import java.util.Calendar
 
 import libble.linalg.implicits._
 import libble.linalg.{DenseVector, Vector}
-import org.apache.spark.Logging
 import org.apache.spark.rdd.RDD
 
 import scala.collection.mutable.ArrayBuffer
@@ -43,7 +42,7 @@ class GLS_Matrix_Batch(var stepSize: Double,
                        var iters: Int,
                        var parts: Int,
                        var batchSize: Int,
-                       var K: Int) extends Logging with Serializable {
+                       var K: Int) extends  Serializable {
   def this() = this(1.0, 0.0001, 0.0001, 5, 2, 1, 1)
 
   private[this] var stopBound: Double = 0.0
@@ -228,7 +227,7 @@ class GLS_Matrix_Batch(var stepSize: Double,
       i += 1
       time = Calendar.getInstance().getTimeInMillis
     }
-    logInfo(s"losses of the last 10 iteration are:${lossArray.takeRight(5).mkString(",")}")
+    println(s"losses of the last 10 iteration are:${lossArray.takeRight(5).mkString(",")}")
 
     (weights, lossArray.toArray)
 

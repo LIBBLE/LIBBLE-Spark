@@ -15,7 +15,6 @@
 package libble.linalg
 
 import scala.collection.mutable.ArrayBuffer
-
 /**
   * Using with the implicit method, add methods to the Vectors.
   * @param vec

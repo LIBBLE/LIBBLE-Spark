@@ -1,23 +1,22 @@
 /**
- * Copyright (c) 2016 LIBBLE team supervised by Dr. Wu-Jun LI at Nanjing University.
- * All Rights Reserved.
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
-
- * http://www.apache.org/licenses/LICENSE-2.0
-
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License. */
+  * Copyright (c) 2016 LIBBLE team supervised by Dr. Wu-Jun LI at Nanjing University.
+  * All Rights Reserved.
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  * http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License. */
 package libble.generalizedLinear
 
 import libble.context.Instance
 import libble.linalg.implicits.vectorAdOps
 import libble.linalg.{DenseVector, Vector}
-import org.apache.spark.Logging
 import org.apache.spark.rdd.RDD
 import scala.collection.mutable.ArrayBuffer
 import scala.math._
@@ -32,16 +31,16 @@ import scala.util.Random
   * @param iters    the number of outer loop
   * @param partsNum the number of partitions which correspond to the number of task.
   */
-class GeneralizedLinearModel(var stepSize: Double,
-                             var regParam: Double,
-                             var factor: Double,
-                             var iters: Int,
-                             var partsNum: Int) extends Logging with Serializable {
+class LinearScope(var stepSize: Double,
+                  var regParam: Double,
+                  var factor: Double,
+                  var iters: Int,
+                  var partsNum: Int) extends Serializable {
   def this() = this(1.0, 0.0001, 0.0001, 5, -1)
 
   private[this] var weights: Option[Vector] = None
   private[this] var lossfunc: LossFunc = new LogisticLoss()
-  private[this] var regularizer: Regularizer = new L2Reg()
+  private[this] var updater: Updater = new L2Updater()
 
   private[this] var addBias: Boolean = true
 
@@ -109,11 +108,11 @@ class GeneralizedLinearModel(var stepSize: Double,
   /**
     * Set the Regularizer
     *
-    * @param reg
+    * @param up
     * @return this
     */
-  def setRegularizer(reg: Regularizer): this.type = {
-    regularizer = reg
+  def setUpdater(up: Updater): this.type = {
+    updater = up
     this
   }
 
@@ -235,6 +234,7 @@ class GeneralizedLinearModel(var stepSize: Double,
 
   /**
     * Optimization engine.
+    *
     * @param data
     * @param initialWeights
     * @return lossArray
@@ -265,41 +265,19 @@ class GeneralizedLinearModel(var stepSize: Double,
       )
       mu *= (1.0 / count.toDouble)
 
-      val loss = totalLoss / count.toDouble + regularizer.getRegVal(w, regParam)
+      val loss = totalLoss / count.toDouble + updater.getRegVal(w, regParam)
       lossArray += loss
 
-      logInfo(s"loss: $loss at iters: $i, with time: ${time - startTime}")
+      println(s"loss: $loss at iters: $i, with time: ${time - startTime}")
+
+
 
 
       val lastWeights = w.copy
-      w = data.mapPartitions(iter => {
-        val omiga = w_0.value.copy
-        val indexedSeq = iter.toIndexedSeq
-        val pNum = indexedSeq.size
 
-        val rand = new Random(partsNum * pNum)
 
-        for (j <- 1 to pNum) {
-          val e = indexedSeq(rand.nextInt(pNum))
-          val f1 = lossfunc.deltaF(e._2, e._1, omiga)
-          f1 -= lossfunc.deltaF(e._2, e._1, w_0.value)
-          //          val delta = f1 x e._2
-          //          delta += mu
-          val delta = omiga - w_0.value
-          delta *= factor
-          val temp = f1 x e._2
-          delta += temp
-          delta += mu
-          regularizer.update(omiga, delta, stepSize, regParam)
+      w= updater.update(data:RDD[(Double,Vector)],w:Vector,mu:Vector,lossfunc:LossFunc,stepSize:Double,factor:Double,regParam:Double)
 
-        }
-        Iterator(omiga)
-
-      }, true).treeAggregate(new DenseVector(n))(seqOp = (c, w) => {
-        c += w
-      }, combOp = (c1, c2) => {
-        c1 += c2
-      }) /= (partsNum)
 
 
       convergenced = isConvergenced(lastWeights, w)
@@ -308,7 +286,7 @@ class GeneralizedLinearModel(var stepSize: Double,
 
     }
 
-    logInfo(s"losses of the last 5 iteration are:${lossArray.takeRight(5).mkString(",")}")
+    println(s"losses of the last 5 iteration are:${lossArray.takeRight(5).mkString(",")}")
     weights = Some(w)
     lossArray.toArray
   }
@@ -327,6 +305,7 @@ class GeneralizedLinearModel(var stepSize: Double,
 
   /**
     * Predict on the Vector using the model.
+    *
     * @param v
     * @return Double
     */
@@ -338,7 +317,8 @@ class GeneralizedLinearModel(var stepSize: Double,
   }
 
   /**
-    *Predict on the data using the model.
+    * Predict on the data using the model.
+    *
     * @param input
     * @return RDD[Double]
     */
@@ -373,5 +353,39 @@ class GeneralizedLinearModel(var stepSize: Double,
     input.map(predict)
   }
 
+}
 
+class WeightsVector(val partA: Vector, val partB: Vector) {
+  require(partA.size == partB.size)
+
+  import libble.linalg.implicits.vectorAdOps
+
+  var fac_a = 1.0
+  var fac_b = 0.0
+
+  def size = partA.size
+
+  def dot(data: Vector): Double = {
+    fac_a * (partA * data) + fac_b * (partB * data)
+  }
+
+  def *(data: Vector): Double = {
+    dot(data)
+  }
+
+  def apply(i: Int): Double = {
+    fac_a * partA(i) + fac_b * partB(i)
+  }
+
+  def merge(): WeightsVector = {
+    partA *= fac_a
+    partA.plusax(fac_b, partB)
+    fac_a = 1.0
+    fac_b = 0.0
+    this
+  }
+  def toDense():DenseVector={
+    partA *= fac_a
+    partA.plusax(fac_b, partB)
+  }
 }

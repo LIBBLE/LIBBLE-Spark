@@ -14,7 +14,7 @@
  * limitations under the License. */
 package libble.classification
 
-import libble.generalizedLinear.{GeneralizedLinearModel, L2Reg, LogisticLoss}
+import libble.generalizedLinear.{L2Updater, LinearScope, LogisticLoss}
 
 /**
   * This class is the model of LogisticRegression with default regularization L2Reg.
@@ -29,10 +29,10 @@ class LogisticRegression(stepSize: Double,
                          regParam: Double,
                          factor: Double,
                          iters: Int,
-                         partsNum: Int) extends GeneralizedLinearModel(stepSize, regParam, factor, iters, partsNum) {
+                         partsNum: Int) extends LinearScope(stepSize, regParam, factor, iters, partsNum) {
 
   setLossFunc(new LogisticLoss())
-  setRegularizer(new L2Reg())
+  setUpdater(new L2Updater())
 
 
   /**

@@ -16,7 +16,6 @@ package libble.features
 
 import libble.linalg.implicits.vectorAdOps
 import libble.linalg.{DenseVector, SparseVector, Vector}
-import org.apache.spark.Logging
 import org.apache.spark.rdd.RDD
 import scala.beans.BeanProperty
 
@@ -27,7 +26,7 @@ import scala.beans.BeanProperty
   * @param scalStd
   */
 
-class Scaller(var centerlized: Boolean = false, var scalStd: Boolean = true) extends Logging with Serializable {
+class Scaller(var centerlized: Boolean = false, var scalStd: Boolean = true) extends  Serializable {
   @BeanProperty var center: Option[Vector] = None
   @BeanProperty var std: Option[Vector] = None
 

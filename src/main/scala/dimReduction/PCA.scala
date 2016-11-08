@@ -18,7 +18,6 @@ import java.util.Calendar
 
 import libble.linalg.implicits._
 import libble.linalg.{DenseVector, Vector}
-import org.apache.spark.Logging
 import org.apache.spark.rdd.RDD
 
 import scala.collection.mutable.ArrayBuffer
@@ -40,7 +39,7 @@ class PCA(var K: Int,
           var stepSize: Double,
           var iteration: Int,
           var parts: Int,
-          var batchSize: Int) extends Logging with Serializable {
+          var batchSize: Int) extends  Serializable {
   require(K >= 1, s"K is the number of principal components, it should be that K >= 1 but was given $K")
 
   var eigenvalues = new ArrayBuffer[Double]()

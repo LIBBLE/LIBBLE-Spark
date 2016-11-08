@@ -4,9 +4,9 @@
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
   * You may obtain a copy of the License at
-
+  *
   * http://www.apache.org/licenses/LICENSE-2.0
-
+  *
   * Unless required by applicable law or agreed to in writing, software
   * distributed under the License is distributed on an "AS IS" BASIS,
   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,8 +35,12 @@ abstract class LossFunc extends Serializable {
     *
     */
 
-  def deltaF(data: Vector, label: Double, weights: Vector): Vector
+  def deltaF(data: Vector, label: Double, weights: WeightsVector): Vector
 
+
+
+
+  def deltaF(data: Vector, label: Double, weights: Vector): Vector
   /**
     * Here we return the gradient factor and loss.
     *
@@ -70,6 +74,7 @@ abstract class LossFunc extends Serializable {
   */
 /**
   * Here we defined the logistic Loss.
+  *
   * @param classNum
   */
 class LogisticLoss(classNum: Int) extends LossFunc {
@@ -87,11 +92,11 @@ class LogisticLoss(classNum: Int) extends LossFunc {
     * @return delta factor
     *
     */
-  override def deltaF(data: Vector, label: Double, weights: Vector): Vector = {
+  override def deltaF(data: Vector, label: Double, weights: WeightsVector): Vector = {
     require((data.size % weights.size) == 0 || classNum == (weights.size / data.size + 1), "weights size not match!!!")
     classNum match {
       case 2 => {
-        val margin = -1.0 * (data * weights)
+        val margin = -1.0 * (weights * data)
         val factor = (1.0 / (1.0 + math.exp(margin))) - label
         new DenseVector(Array(factor))
       }
@@ -151,6 +156,74 @@ class LogisticLoss(classNum: Int) extends LossFunc {
       }
     }
   }
+
+
+
+  def deltaF(data: Vector, label: Double, weights: Vector): Vector= {
+    require((data.size % weights.size) == 0 || classNum == (weights.size / data.size + 1), "weights size not match!!!")
+    classNum match {
+      case 2 => {
+        val margin = -1.0 * (weights * data)
+        val factor = (1.0 / (1.0 + math.exp(margin))) - label
+        new DenseVector(Array(factor))
+      }
+      case _ => {
+        val dim = data.size
+        var marginY = 0.0
+        var maxIndex = 0
+        var maxMargin = Double.NegativeInfinity
+        val margins = Array.tabulate(classNum - 1) { p =>
+          var tMargin = 0.0
+          data.foreachActive((i, v) => {
+            if (v != 0) {
+              tMargin += v * weights(p * dim + i)
+            }
+          })
+          if (p == (label - 1))
+            marginY = tMargin
+          if (tMargin > maxMargin) {
+            maxIndex = p
+            maxMargin = tMargin
+          }
+          tMargin
+        }
+
+        val sum = {
+          var temp = 0.0
+          if (maxMargin > 0) {
+            for (i <- 0 until classNum - 1) {
+              margins(i) -= maxMargin
+              if (i == maxIndex) {
+                temp += math.exp(-maxMargin)
+              }
+              else {
+                temp += math.exp(margins(i))
+              }
+            }
+          } else {
+            for (i <- 0 until classNum - 1) {
+              temp += math.exp(margins(i))
+            }
+          }
+          temp
+        }
+        val deltaFactor = new Array[Double](classNum - 1)
+
+        for (i <- 0 until classNum - 1) {
+          val la = {
+            if (label != 0.0 && label == i + 1)
+              1.0
+            else
+              0.0
+          }
+          deltaFactor(i) = math.exp(margins(i)) / (sum + 1.0) - la
+        }
+
+        new DenseVector(deltaFactor)
+      }
+    }
+  }
+
 
   /**
     * Here we return the gradient factor and loss.
@@ -290,8 +363,21 @@ class HingeLoss extends LossFunc {
     * @return delta factor
     *
     */
+  override def deltaF(data: Vector, label: Double, weights: WeightsVector): Vector = {
+    val innerP = weights * data
+    val factor = 2 * label - 1.0
+    if (1.0 > factor * innerP) {
+      new DenseVector(Array(-factor))
+    }
+    else {
+      new DenseVector(1)
+    }
+  }
+
+
+
   override def deltaF(data: Vector, label: Double, weights: Vector): Vector = {
-    val innerP = data * weights
+    val innerP = weights * data
     val factor = 2 * label - 1.0
     if (1.0 > factor * innerP) {
       new DenseVector(Array(-factor))
@@ -310,7 +396,7 @@ class HingeLoss extends LossFunc {
     * @return delta cumulate to cum,and loss
     */
   override def deltaFWithLoss(data: Vector, label: Double, weights: Vector): (Vector, Double) = {
-    val innerP = data * weights
+    val innerP = weights * data
     val factor = 2 * label - 1.0
     if (1.0 > factor * innerP) {
       (new DenseVector(Array(-factor)), 1.0 - factor * innerP)
@@ -328,7 +414,7 @@ class HingeLoss extends LossFunc {
     * @return predict Result
     */
   override def predict(data: Vector, weights: Vector): Double = {
-    data * weights
+    weights * data
   }
 }
 
@@ -346,10 +432,14 @@ class LeastSquareLoss extends LossFunc {
     * @return delta factor
     *
     */
-  override def deltaF(data: Vector, label: Double, weights: Vector): Vector = {
-    new DenseVector(Array(data * weights - label))
+  override def deltaF(data: Vector, label: Double, weights: WeightsVector): Vector = {
+    new DenseVector(Array(weights * data - label))
   }
 
+
+  override def deltaF(data: Vector, label: Double, weights: Vector): Vector = {
+    new DenseVector(Array(weights * data - label))
+  }
   /**
     * Here we return the gradient factor and loss.
     *
@@ -359,7 +449,7 @@ class LeastSquareLoss extends LossFunc {
     * @return delta cumulate to cum,and loss
     */
   override def deltaFWithLoss(data: Vector, label: Double, weights: Vector): (Vector, Double) = {
-    val deltaF = data * weights - label
+    val deltaF = weights * data - label
     (new DenseVector(Array(deltaF)), deltaF * deltaF / 2.0)
   }
 
@@ -376,4 +466,4 @@ class LeastSquareLoss extends LossFunc {
 }
 
 
-/*************************************************************************************/
+/** ***********************************************************************************/
