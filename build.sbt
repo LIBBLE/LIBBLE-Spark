@@ -15,8 +15,5 @@ artifactName := { (sv: ScalaVersion, module: ModuleID, artifact: Artifact) =>
 
 libraryDependencies += "org.apache.spark"%%"spark-core"%"2.0.1"
 
-libraryDependencies += "org.scalatest"%%"scalatest"%"2.2.6"
+libraryDependencies += "org.scalatest"%%"scalatest"%"3.0.0"
 
-
-
-publishTo := Some(Resolver.file("file",  new File(Path.userHome+"/mvn-repo")))
