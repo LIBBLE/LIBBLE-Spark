@@ -1,6 +1,5 @@
 package libble.linalg
 
-import libble.linalg.SparseVector
 import org.scalatest.FunSuite
 
 /**

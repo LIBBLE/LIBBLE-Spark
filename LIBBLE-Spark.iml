@@ -135,5 +135,6 @@
     <orderEntry type="library" name="Maven: org.scala-lang:scala-reflect:2.11.8" level="project" />
     <orderEntry type="library" name="Maven: org.scala-lang.modules:scala-xml_2.11:1.0.5" level="project" />
     <orderEntry type="library" name="Maven: org.scala-lang.modules:scala-parser-combinators_2.11:1.0.4" level="project" />
+    <orderEntry type="library" name="scala-sdk-2.10.5" level="application" />
   </component>
 </module>

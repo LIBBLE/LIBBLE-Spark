@@ -1,16 +1,22 @@
-
-name := "LIBBLE-Spark"
+name := "libble-spark"
 
 version := "1.0.1"
 
+organization := "libble"
+
 scalaVersion := "2.11.7"
+
 
 artifactName := { (sv: ScalaVersion, module: ModuleID, artifact: Artifact) =>
   artifact.name + "-" + module.revision + "." + artifact.extension
 }
 
-libraryDependencies += "org.apache.spark" %% "spark-core" % "1.5.1"
 
-resolvers ++= Seq(
-  "Sonatype Releases" at "https://oss.sonatype.org/content/repositories/releases/"
-)
+
+libraryDependencies += "org.apache.spark"%%"spark-core"%"2.0.1"
+
+libraryDependencies += "org.scalatest"%%"scalatest"%"2.2.6"
+
+
+
+publishTo := Some(Resolver.file("file",  new File(Path.userHome+"/mvn-repo")))

@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/LIBBLE-Spark.iml" filepath="$PROJECT_DIR$/LIBBLE-Spark.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/libble-spark.iml" filepath="$PROJECT_DIR$/.idea/modules/libble-spark.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/libble-spark-build.iml" filepath="$PROJECT_DIR$/.idea/modules/libble-spark-build.iml" />
     </modules>
   </component>
 </project>
