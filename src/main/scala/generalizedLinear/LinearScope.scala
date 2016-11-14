@@ -38,9 +38,9 @@ class LinearScope(var stepSize: Double,
                   var partsNum: Int) extends Serializable {
   def this() = this(1.0, 0.0001, 0.0001, 5, -1)
 
-  private[this] var weights: Option[Vector] = None
-  private[this] var lossfunc: LossFunc = new LogisticLoss()
-  private[this] var updater: Updater = new L2Updater()
+  private[generalizedLinear] var weights: Option[Vector] = None
+  private[generalizedLinear] var lossfunc: LossFunc = new LogisticLoss()
+  private[generalizedLinear] var updater: Updater = new L2Updater()
 
   private[this] var addBias: Boolean = true
 
@@ -78,7 +78,7 @@ class LinearScope(var stepSize: Double,
     * @param value
     * @return this.type
     */
-  private[this] def setBias(value: Boolean): this.type = {
+  def setBias(value: Boolean): this.type = {
     addBias = value
     this
   }
@@ -239,7 +239,7 @@ class LinearScope(var stepSize: Double,
     * @param initialWeights
     * @return lossArray
     */
-  private[this] def runEngine(data: RDD[(Double, Vector)], initialWeights: Vector): Array[Double] = {
+  def runEngine(data: RDD[(Double, Vector)], initialWeights: Vector): Array[Double] = {
     val count = data.count()
     var w = initialWeights.copy
     val n = w.size
@@ -276,7 +276,7 @@ class LinearScope(var stepSize: Double,
       val lastWeights = w.copy
 
 
-      w= updater.update(data:RDD[(Double,Vector)],w:Vector,mu:Vector,lossfunc:LossFunc,stepSize:Double,factor:Double,regParam:Double)
+      w = updater.update(data, w, mu, lossfunc, stepSize, factor, regParam)
 
 
 
@@ -297,7 +297,7 @@ class LinearScope(var stepSize: Double,
     * @param thisWeights
     * @return Boolean
     */
-  private[this] def isConvergenced(lastWeights: Vector, thisWeights: Vector): Boolean = {
+  def isConvergenced(lastWeights: Vector, thisWeights: Vector): Boolean = {
     val temp = lastWeights.copy
     temp -= thisWeights
     stopBound * max(thisWeights.norm2(), 1.0) > lastWeights.norm2()
@@ -384,7 +384,8 @@ class WeightsVector(val partA: Vector, val partB: Vector) {
     fac_b = 0.0
     this
   }
-  def toDense():DenseVector={
+
+  def toDense(): DenseVector = {
     partA *= fac_a
     partA.plusax(fac_b, partB)
   }
