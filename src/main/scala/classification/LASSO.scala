@@ -30,6 +30,7 @@ class LASSO(stepSize: Double,
             factor: Double,
             iters: Int,
             partsNum: Int) extends LinearScope(stepSize, regParam, factor, iters, partsNum) {
+  def this() = this(1.0, 0.0001, 0.0001, 5, -1)
 
   setLossFunc(new LogisticLoss())
   setUpdater(new L2Updater())
