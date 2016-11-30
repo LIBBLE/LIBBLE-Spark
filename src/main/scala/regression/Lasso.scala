@@ -12,9 +12,9 @@
   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   * See the License for the specific language governing permissions and
   * limitations under the License. */
-package libble.classification
+package libble.regression
 
-import libble.generalizedLinear.{L2Updater, LinearScope, LogisticLoss}
+import libble.generalizedLinear._
 
 /**
   * This class is the model of LogisticRegression with default regularization L2Reg.
@@ -25,31 +25,20 @@ import libble.generalizedLinear.{L2Updater, LinearScope, LogisticLoss}
   * @param iters
   * @param partsNum
   */
-class LASSO(stepSize: Double,
+class Lasso(stepSize: Double,
             regParam: Double,
             factor: Double,
             iters: Int,
             partsNum: Int) extends LinearScope(stepSize, regParam, factor, iters, partsNum) {
   def this() = this(1.0, 0.0001, 0.0001, 5, -1)
 
-  setLossFunc(new LogisticLoss())
-  setUpdater(new L2Updater())
+  setLossFunc(new LeastSquareLoss())
+  setUpdater(new L1Updater())
 
 
-  /**
-    * Default threshold is 0.5.
-    */
-  setThreshold(0.5)
 
-  /**
-    * Set the classNum
-    *
-    * @param classNum
-    * @return this
-    */
-  override def setClassNum(classNum: Int): this.type = {
-    super.setClassNum(classNum)
-    setLossFunc(new LogisticLoss(classNum))
+ clearThreshold
 
-  }
+
+
 }

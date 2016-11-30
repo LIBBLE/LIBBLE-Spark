@@ -14,7 +14,7 @@
   * limitations under the License. */
 package libble.regression
 
-import libble.generalizedLinear.{L1Updater, LeastSquareLoss, LinearScope}
+import libble.generalizedLinear.{ L2Updater, LeastSquareLoss, LinearScope}
 
 /**
   * This is the model of LinearRegression with default regularization L1Reg.
@@ -33,7 +33,7 @@ class LinearRegression(stepSize: Double,
   def this() = this(1.0, 0.0001, 0.0001, 5, -1)
 
   setLossFunc(new LeastSquareLoss)
-  setUpdater(new L1Updater())
+  setUpdater(new L2Updater())
 
   /**
     * Set the output to be the predict value.
