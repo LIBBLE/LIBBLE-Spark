@@ -59,8 +59,7 @@ object testLR {
     val numClasses = options.remove("numClasses").map(_.toInt).getOrElse(2)
     import libble.context.implicits.sc2LibContext
     val training = sc.loadLIBBLEFile(args(0), numPart)
-    val m = new LogisticRegression(stepSize, regParam, elasticF, numIter, numPart).setUpdater(new L1Updater)
-      .setClassNum(numClasses)
+    val m = new LogisticRegression(stepSize, regParam, elasticF, numIter, numPart)
     m.train(training)
 
 
