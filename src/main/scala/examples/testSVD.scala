@@ -14,7 +14,7 @@
  * limitations under the License. */
 package libble.examples
 
-import libble.matrixDecomposition.SVD
+import libble.dimReduction.SVD
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.{SparkConf, SparkContext}
 
