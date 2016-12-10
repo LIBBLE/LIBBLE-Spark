@@ -22,7 +22,6 @@ import org.apache.spark.{SparkConf, SparkContext}
   */
 object testScaller {
   def main(args: Array[String]) {
-    System.setProperty("hadoop.home.dir", "D:\\Program Files\\hadoop-2.6.0")
 
     val conf = new SparkConf()
       .setAppName("myTest")

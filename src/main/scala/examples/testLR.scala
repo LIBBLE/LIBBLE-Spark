@@ -39,7 +39,6 @@ object testLR {
       }
     }
     val options = mutable.Map(optionsList: _*)
-    System.setProperty("hadoop.home.dir", "D:\\Program Files\\hadoop-2.6.0")
     Logger.getLogger("org.apache.spark").setLevel(Level.WARN)
     Logger.getLogger("org.eclipse.jetty.server").setLevel(Level.OFF)
 
