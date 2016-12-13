@@ -90,7 +90,6 @@ class KMeans(
   def train[T](data: RDD[(T, Vector)]): (KMeansModel, Double) = {
     val centers = initCenters.getOrElse(initCenter(data))
 
-    val br_centers = data.sparkContext.broadcast(centers)
     val trainData = data.map(e => (e._2, e._2.norm2)).cache()
     val squareStopBound = stopBound * stopBound
 
@@ -100,6 +99,8 @@ class KMeans(
 
     while (!isConvergence && i < maxIters) {
       costs.reset()
+      val br_centers = data.sparkContext.broadcast(centers)
+
       val res = trainData.mapPartitions { iter =>
         val counts = new Array[Int](k)
         util.Arrays.fill(counts, 0)
@@ -127,7 +128,7 @@ class KMeans(
         if (squareDist >= squareStopBound) {
           isConvergence = false
         }
-        centers(index) = (sum, sum.norm2)
+        centers(index) = (sum, sumNorm2)
       }
       i += 1
     }
