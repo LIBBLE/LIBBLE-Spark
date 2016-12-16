@@ -14,7 +14,7 @@ import scala.collection.mutable
 /***
   * Here is the example of using Matrix Factorization.
   */
-object testMF {
+object testCF {
   def main(args: Array[String]) {
 
     if (args.length < 1) {
