@@ -37,7 +37,6 @@ object testCF {
       .setAppName("testMF")
     val sc = new SparkContext(conf)
 
-
     val stepsize = options.remove("stepsize").map(_.toDouble).getOrElse(0.01)
     val regParam_u = options.remove("regParam_u").map(_.toDouble).getOrElse(0.05)
     val regParam_v = options.remove("regParam_u").map(_.toDouble).getOrElse(0.05)
