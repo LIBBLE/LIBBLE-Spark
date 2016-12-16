@@ -10,6 +10,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 
 import scala.collection.mutable
 
+
 /***
   * Here is the example of using Matrix Factorization.
   */

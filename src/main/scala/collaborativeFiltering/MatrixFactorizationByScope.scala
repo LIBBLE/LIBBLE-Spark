@@ -73,12 +73,14 @@ class MatrixFactorizationByScope extends Serializable{
     //initialize item factors in master
     var itemFactors = initialize(items, rank)
     //initialize U in p workers
-    ratingsByRow.foreachPartition { iter =>
+    ratingsByRow.mapPartitionsWithIndex { (index,iter) =>
       val (indices_x, indices_y) = iter.map(r => (r.index_x, r.index_y)).toSet.unzip
       val userFactors = initialize(indices_x,rank)
-      MatrixFactorizationByScope.workerstore.put("userFactors", userFactors)
-      MatrixFactorizationByScope.workerstore.put("itemIndices", indices_y)
-    }
+      MatrixFactorizationByScope.workerstore.put(s"userFactors_$index", userFactors)
+      val deltaFactorByOldV = mutable.Map[(Int, Int),Double]()
+      MatrixFactorizationByScope.workerstore.put(s"deltaFactorByOldV_$index" , deltaFactorByOldV)
+      Iterator.single(0)
+    }.count()
     //main loop
     val startTime = System.currentTimeMillis()
     val lossList = new ArrayBuffer[Double]()
@@ -91,7 +93,7 @@ class MatrixFactorizationByScope extends Serializable{
         val localRatings = iter.toArray
         val numLocalRatings = localRatings.length
         val localV = bc_itemFactors.value
-        val localU = MatrixFactorizationByScope.workerstore.get[Map[Int, Vector]]("userFactors")
+        val localU = MatrixFactorizationByScope.workerstore.get[Map[Int, Vector]](s"userFactors_$index")
         val seedGen = new XORShiftRandom()
         val random = new XORShiftRandom(byteswap64(seedGen.nextLong() ^ index))
         //inner loop
@@ -106,7 +108,7 @@ class MatrixFactorizationByScope extends Serializable{
           uh.plusax(stepsize * residual, vj)
         }
         val localRatingsByItem = localRatings.groupBy(r => r.index_y)
-        val deltaFactorByOldV = mutable.Map[(Int, Int),Double]()
+        val deltaFactorByOldV = MatrixFactorizationByScope.workerstore.get[mutable.Map[(Int, Int),Double]](s"deltaFactorByOldV_$index")
         val allDeltaSum = localRatingsByItem.map{case (item, ratings) =>
           val deltaSum = new DenseVector(new Array[Double](rank))
           val vj = localV.get(item).get
@@ -117,7 +119,6 @@ class MatrixFactorizationByScope extends Serializable{
             deltaFactorByOldV += ((r.index_x, r.index_y) -> minusResidual)
             deltaSum.plusax(minusResidual, uh)
           }
-          MatrixFactorizationByScope.workerstore.put("deltaFactorByOldV" , deltaFactorByOldV)
           item -> deltaSum
         }
         Iterator.single(allDeltaSum)
@@ -141,12 +142,13 @@ class MatrixFactorizationByScope extends Serializable{
         val localRatings = iter.toArray
         val numLocalRatings = localRatings.length
         val localV = bc_itemFactors.value
-        val localU = MatrixFactorizationByScope.workerstore.get[Map[Int, Vector]]("userFactors")
+        val localU = MatrixFactorizationByScope.workerstore.get[Map[Int, Vector]](s"userFactors_$index")
         val seedGen = new XORShiftRandom()
         val random = new XORShiftRandom(byteswap64(seedGen.nextLong() ^ index))
-        val deltaFactorByOldV = MatrixFactorizationByScope.workerstore.get[mutable.Map[(Int, Int),Double]]("deltaFactorByOldV")
+        val deltaFactorByOldV = MatrixFactorizationByScope.workerstore.get[mutable.Map[(Int, Int),Double]](s"deltaFactorByOldV_$index")
         var loss = 0.0
         val fullgra = bc_fullgrad.value
+        //inner loop
         for(i <- 1 to numInnerIters) {
           //randomly select an instance r_h,k from R_i
           val ranRating = localRatings(random.nextInt(numLocalRatings))
@@ -159,7 +161,7 @@ class MatrixFactorizationByScope extends Serializable{
           delta.plusax(1.0, fullgra(ranRating.index_y))
           vj *= (1-stepsize*lambda_v)
           vj.plusax(-stepsize, delta)
-          //appro loss
+          //approximate loss
           loss += minusResidual * minusResidual
         }
         Iterator.single((bc_itemFactors.value, loss))
@@ -174,7 +176,7 @@ class MatrixFactorizationByScope extends Serializable{
       itemFactors = newItemFactors
       itemFactors.foreach(ui => ui._2 /= numParts.toDouble)
       bc_itemFactors.unpersist()
-
+      //update stepsize
       val approxLoss = lossSum / (numParts * numInnerIters)
       if (i != 0) {
         val oldLoss = lossList.last
@@ -186,11 +188,12 @@ class MatrixFactorizationByScope extends Serializable{
       lossList.append(approxLoss)
       i += 1
     }
+    //training loss
     val trainOver = System.currentTimeMillis()
     val bc_test_itemFactors = ratingsByRow.context.broadcast(itemFactors)
-    val loss = ratingsByRow.mapPartitions { iter =>
+    val loss = ratingsByRow.mapPartitionsWithIndex { (index,iter) =>
       val localV = bc_test_itemFactors.value
-      val localU = MatrixFactorizationByScope.workerstore.get[Map[Int, Vector]]("userFactors")
+      val localU = MatrixFactorizationByScope.workerstore.get[Map[Int, Vector]](s"userFactors_$index")
       val reguV = localV.mapValues(v => lambda_v * v.dot(v))
       val reguU = localU.mapValues(u => lambda_u * u.dot(u))
       val ls = iter.foldLeft(0.0) { (l, r) =>
@@ -205,14 +208,14 @@ class MatrixFactorizationByScope extends Serializable{
     bc_test_itemFactors.unpersist()
     println(s"loss: $loss\t")
     println(s"cputime of training process(ms): ${ trainOver - startTime }")
-    val userFactorsRDD = ratingsByRow.mapPartitions{iter =>
-      val factors = MatrixFactorizationByScope.workerstore.get[Map[Int, Vector]]("userFactors")
+    //build model
+    val userFactorsRDD = ratingsByRow.mapPartitionsWithIndex{ (index,iter) =>
+      val factors = MatrixFactorizationByScope.workerstore.get[Map[Int, Vector]](s"userFactors_$index")
       factors.toIterator
     }.cache()
     val itemFactorsRDD = ratingsByRow.context.parallelize(itemFactors.toSeq, numParts).cache()
     new MatrixFactorizationModel(rank, userFactorsRDD, itemFactorsRDD)
   }
-
 }
 
 object MatrixFactorizationByScope {
