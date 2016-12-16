@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/libble-spark.iml" filepath="$PROJECT_DIR$/.idea/modules/libble-spark.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/libble-spark-build.iml" filepath="$PROJECT_DIR$/.idea/modules/libble-spark-build.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libble-spark_2.11.iml" filepath="$PROJECT_DIR$/libble-spark_2.11.iml" />
     </modules>
   </component>
 </project>

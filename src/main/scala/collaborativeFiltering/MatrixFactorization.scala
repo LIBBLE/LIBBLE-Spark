@@ -78,16 +78,38 @@ class MatrixFactorization extends Serializable{
     //initialize item factors in master
     var itemFactors = initialize(items, rank)
     //initialize U in p workers
-    ratingsByRow.foreachPartition{iter =>
+    ratingsByRow.mapPartitionsWithIndex{(index,iter) =>
       val indices_x = iter.map(r => r.index_x).toSet
       val userFactors = initialize(indices_x,rank)
-      MatrixFactorization.workerstore.put("userFactors", userFactors)
-    }
+      MatrixFactorization.workerstore.put(s"userFactors_$index", userFactors)
+      Iterator.single(0)
+    }.count()
     //main loop
     val startTime = System.currentTimeMillis()
     val lossList = new ArrayBuffer[Double]()
+    var testTime = 0L
     var i = 0
     while (i < numIters){
+      //loss
+      val testTimeStart = System.currentTimeMillis()
+      val bc_test_itemFactors = ratingsByRow.context.broadcast(itemFactors)
+      val loss = ratingsByRow.mapPartitionsWithIndex {(index,iter) =>
+        val localV = bc_test_itemFactors.value
+        val localU = MatrixFactorization.workerstore.get[Map[Int, Vector]](s"userFactors_$index")
+        val reguV = localV.mapValues(v => lambda_v * v.dot(v))
+        val reguU = localU.mapValues(u => lambda_u * u.dot(u))
+        val ls = iter.foldLeft(0.0) { (l, r) =>
+          val uh = localU.get(r.index_x).get
+          val vj = localV.get(r.index_y).get
+          val residual = r.rating - uh.dot(vj)
+          l + residual * residual + reguU.get(r.index_x).get + reguV.get(r.index_y).get
+        }
+        Iterator.single(ls)
+      }.reduce(_ + _) / numRatings
+      bc_test_itemFactors.unpersist()
+      print(s"$loss\t")
+      testTime += (System.currentTimeMillis() - testTimeStart)
+      println(s"${System.currentTimeMillis() - testTime - startTime}")
       //broadcast V to p workers
       val bc_itemFactors = ratingsByRow.context.broadcast(itemFactors)
       //for each woker i parallelly do
@@ -95,7 +117,7 @@ class MatrixFactorization extends Serializable{
         val localRatings = iter.toArray
         val numLocalRatings = localRatings.length
         val localV = bc_itemFactors.value
-        val localU = MatrixFactorization.workerstore.get[Map[Int, Vector]]("userFactors")
+        val localU = MatrixFactorization.workerstore.get[Map[Int, Vector]](s"userFactors_$index")
         val seedGen = new XORShiftRandom()
         val random = new XORShiftRandom(byteswap64(seedGen.nextLong() ^ index))
         var loss = 0.0
@@ -148,9 +170,9 @@ class MatrixFactorization extends Serializable{
     }
     val trainOver = System.currentTimeMillis()
     val bc_test_itemFactors = ratingsByRow.context.broadcast(itemFactors)
-    val loss = ratingsByRow.mapPartitions { iter =>
+    val loss = ratingsByRow.mapPartitionsWithIndex { (index,iter )=>
       val localV = bc_test_itemFactors.value
-      val localU = MatrixFactorizationByScope.workerstore.get[Map[Int, Vector]]("userFactors")
+      val localU = MatrixFactorization.workerstore.get[Map[Int, Vector]](s"userFactors_$index")
       val reguV = localV.mapValues(v => lambda_v * v.dot(v))
       val reguU = localU.mapValues(u => lambda_u * u.dot(u))
       val ls = iter.foldLeft(0.0) { (l, r) =>
@@ -166,8 +188,8 @@ class MatrixFactorization extends Serializable{
     println(s"loss: $loss\t")
     println(s"cputime of training process(ms): ${ trainOver - startTime }")
 
-    val userFactorsRDD = ratingsByRow.mapPartitions{iter =>
-      val factors = MatrixFactorization.workerstore.get[Map[Int, Vector]]("userFactors")
+    val userFactorsRDD = ratingsByRow.mapPartitionsWithIndex{(index,iter) =>
+      val factors = MatrixFactorization.workerstore.get[Map[Int, Vector]](s"userFactors_$index")
       factors.toIterator
     }.cache()
     val itemFactorsRDD = ratingsByRow.context.parallelize(itemFactors.toSeq, numParts).cache()
