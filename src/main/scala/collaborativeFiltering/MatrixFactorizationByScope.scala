@@ -1,3 +1,20 @@
+/*
+ *
+ *  Copyright (c) 2016 LIBBLE team supervised by Dr. Wu-Jun LI at Nanjing University.
+ *  All Rights Reserved.
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  You may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
 /**
   * Created by syh on 2016/12/9.
   */
@@ -57,7 +74,9 @@ class MatrixFactorizationByScope extends Serializable{
              rank: Int,
              lambda_u: Double,
              lambda_v: Double,
-             stepSize: Double) : MatrixFactorizationModel = {
+             stepSize: Double,
+             stepsizeScope: Double,
+             ifPrintLoss: Int) : MatrixFactorizationModel = {
     var stepsize = stepSize
     val itemsSize = trainSet.map(r=> (r.index_y, 1)).countByKey()
     val items = itemsSize.keys.toSet
@@ -83,9 +102,33 @@ class MatrixFactorizationByScope extends Serializable{
     }.count()
     //main loop
     val startTime = System.currentTimeMillis()
+    var testTime = 0L
     val lossList = new ArrayBuffer[Double]()
     var i = 0
     while (i < numIters) {
+      if(ifPrintLoss == 1){
+        //loss
+        val testTimeStart = System.currentTimeMillis()
+        val bc_test_itemFactors = ratingsByRow.context.broadcast(itemFactors)
+        //training loss
+        val loss = ratingsByRow.mapPartitions {iter =>
+          val localV = bc_test_itemFactors.value
+          val localU = MatrixFactorizationByScope.workerstore.get[Map[Int, Vector]]("userFactors")
+          val reguV = localV.mapValues(v => lambda_v * v.dot(v))
+          val reguU = localU.mapValues(u => lambda_u * u.dot(u))
+          val ls = iter.foldLeft(0.0) { (l, r) =>
+            val uh = localU.get(r.index_x).get
+            val vj = localV.get(r.index_y).get
+            val residual = r.rating - uh.dot(vj)
+            l + residual * residual + reguU.get(r.index_x).get + reguV.get(r.index_y).get
+          }
+          Iterator.single(ls)
+        }.reduce(_ + _) / numRatings
+        bc_test_itemFactors.unpersist()
+        print(s"$loss\t")
+        testTime += (System.currentTimeMillis() - testTimeStart)
+        println(s"${System.currentTimeMillis() - testTime - startTime}")
+      }
       //broadcast V to p workers
       val bc_itemFactors = ratingsByRow.context.broadcast(itemFactors)
       //for each woker i parallelly do
@@ -159,8 +202,8 @@ class MatrixFactorizationByScope extends Serializable{
           val delta = uh.copy
           delta *= (minusResidual - deltaFactorByOldV.get((ranRating.index_x, ranRating.index_y)).get)
           delta.plusax(1.0, fullgra(ranRating.index_y))
-          vj *= (1-stepsize*lambda_v)
-          vj.plusax(-stepsize, delta)
+          vj *= (1 - stepsizeScope * lambda_v)
+          vj.plusax(-stepsizeScope, delta)
           //approximate loss
           loss += minusResidual * minusResidual
         }
@@ -186,6 +229,9 @@ class MatrixFactorizationByScope extends Serializable{
           stepsize *= 1.05
       }
       lossList.append(approxLoss)
+
+      println(s"approximate loss: $approxLoss, time: ${System.currentTimeMillis() - startTime}")
+
       i += 1
     }
     //training loss

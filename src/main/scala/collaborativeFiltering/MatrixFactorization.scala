@@ -75,7 +75,8 @@ class MatrixFactorization extends Serializable{
              rank: Int,
              lambda_u: Double,
              lambda_v: Double,
-             stepSize: Double) : MatrixFactorizationModel = {
+             stepSize: Double,
+             ifPrintLoss: Int) : MatrixFactorizationModel = {
     var stepsize = stepSize
     val items = trainSet.mapPartitions{iter =>
       val is = iter.map(r =>  r.index_y).toSet
@@ -107,26 +108,29 @@ class MatrixFactorization extends Serializable{
     var testTime = 0L
     var i = 0
     while (i < numIters){
-//      //loss
-//      val testTimeStart = System.currentTimeMillis()
-//      val bc_test_itemFactors = ratingsByRow.context.broadcast(itemFactors)
-//      val loss = ratingsByRow.mapPartitionsWithIndex {(index,iter) =>
-//        val localV = bc_test_itemFactors.value
-//        val localU = MatrixFactorization.workerstore.get[Map[Int, Vector]](s"userFactors_$index")
-//        val reguV = localV.mapValues(v => lambda_v * v.dot(v))
-//        val reguU = localU.mapValues(u => lambda_u * u.dot(u))
-//        val ls = iter.foldLeft(0.0) { (l, r) =>
-//          val uh = localU.get(r.index_x).get
-//          val vj = localV.get(r.index_y).get
-//          val residual = r.rating - uh.dot(vj)
-//          l + residual * residual + reguU.get(r.index_x).get + reguV.get(r.index_y).get
-//        }
-//        Iterator.single(ls)
-//      }.reduce(_ + _) / numRatings
-//      bc_test_itemFactors.unpersist()
-//      print(s"$loss\t")
-//      testTime += (System.currentTimeMillis() - testTimeStart)
-//      println(s"${System.currentTimeMillis() - testTime - startTime}")
+      if(ifPrintLoss == 1){
+        //loss
+        val testTimeStart = System.currentTimeMillis()
+        val bc_test_itemFactors = ratingsByRow.context.broadcast(itemFactors)
+        //training loss
+        val loss = ratingsByRow.mapPartitions {iter =>
+          val localV = bc_test_itemFactors.value
+          val localU = MatrixFactorization.workerstore.get[Map[Int, Vector]]("userFactors")
+          val reguV = localV.mapValues(v => lambda_v * v.dot(v))
+          val reguU = localU.mapValues(u => lambda_u * u.dot(u))
+          val ls = iter.foldLeft(0.0) { (l, r) =>
+            val uh = localU.get(r.index_x).get
+            val vj = localV.get(r.index_y).get
+            val residual = r.rating - uh.dot(vj)
+            l + residual * residual + reguU.get(r.index_x).get + reguV.get(r.index_y).get
+          }
+          Iterator.single(ls)
+        }.reduce(_ + _) / numRatings
+        bc_test_itemFactors.unpersist()
+        print(s"$loss\t")
+        testTime += (System.currentTimeMillis() - testTimeStart)
+        println(s"${System.currentTimeMillis() - testTime - startTime}")
+      }
       //broadcast V to p workers
       val bc_itemFactors = ratingsByRow.context.broadcast(itemFactors)
       //for each woker i parallelly do
@@ -183,6 +187,9 @@ class MatrixFactorization extends Serializable{
           stepsize *= 1.05
       }
       lossList.append(approxLoss)
+
+      println(s"approximate loss: $approxLoss, time: ${System.currentTimeMillis() - startTime}")
+
       i += 1
     }
     val trainOver = System.currentTimeMillis()
