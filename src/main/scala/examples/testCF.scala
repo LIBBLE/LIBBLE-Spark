@@ -21,11 +21,12 @@
   */
 package libble.examples
 
-import libble.collaborativeFiltering.{MatrixFactorizationByScope, MatrixFactorization, Rating}
+import libble.collaborativeFiltering.{MatrixFactorizationByScopeDiffS, MatrixFactorizationByScope, MatrixFactorization, Rating}
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.{SparkConf, SparkContext}
 
 import scala.collection.mutable
+import scala.tools.nsc.transform.patmat.Logic.PropositionalLogic.False
 
 
 /***
@@ -48,38 +49,44 @@ object testCF {
     val sc = new SparkContext(conf)
 
     val trainsetPath = options.remove("trainset").map(_.toString).getOrElse("data\\testMF.txt")
-    val stepsize = options.remove("stepsize").map(_.toDouble).getOrElse(0.1)
-    val regParam_u = options.remove("regParam_u").map(_.toDouble).getOrElse(0.1)
-    val regParam_v = options.remove("regParam_u").map(_.toDouble).getOrElse(0.1)
+    val stepsize = options.remove("stepsize").map(_.toDouble).getOrElse(0.01)
+    val regParam_u = options.remove("regParam_u").map(_.toDouble).getOrElse(0.05)
+    val regParam_v = options.remove("regParam_u").map(_.toDouble).getOrElse(0.05)
     val numIters = options.remove("numIters").map(_.toInt).getOrElse(50)
-    val numParts = options.remove("numParts").map(_.toInt).getOrElse(2)
-    val rank = options.remove("rank").map(_.toInt).getOrElse(10)
-    val testsetPath = options.remove("testset").map(_.toString).getOrElse("data\\testMF.txt")
+    val numParts = options.remove("numParts").map(_.toInt).getOrElse(16)
+    val rank = options.remove("rank").map(_.toInt).getOrElse(40)
+    val testsetPath = options.remove("testset").map(_.toString)
+    val stepsize2 = options.remove("stepsize2").map(_.toDouble).getOrElse(0.1)
+    val ifPrintLoss = options.remove("ifPrintLoss").map(_.toInt).getOrElse(0)
 
     val trainSet = sc.textFile(trainsetPath, numParts)
       .map(_.split(',') match { case Array(user, item, rate) =>
         Rating(rate.toDouble, user.toInt, item.toInt)
       })
-    val testSet = sc.textFile(testsetPath, numParts)
-      .map(_.split(',') match { case Array(user, item, rate) =>
-        Rating(rate.toDouble, user.toInt, item.toInt)
-      })
 
-    val model = new MatrixFactorizationByScope()
+    val model = new MatrixFactorization()
       .train(trainSet,
         numIters,
         numParts,
         rank,
         regParam_u,
         regParam_v,
-        stepsize)
+        stepsize,
+        ifPrintLoss)
 
-    val result = model.predict(testSet.map(r=>(r.index_x,r.index_y)))
-    val rmse = result.map(r=>((r.index_x,r.index_y), r.rating))
-      .join(testSet.map(r=>((r.index_x,r.index_y), r.rating)))
-      .values
-      .map(i => math.pow(i._1 - i._2, 2))
-      .sum() / testSet.count()
-    println(s"rmse of test set: $rmse")
+    if(testsetPath.isDefined) {
+      val testSet = sc.textFile(testsetPath.get, numParts)
+        .map(_.split(',') match { case Array(user, item, rate) =>
+          Rating(rate.toDouble, user.toInt, item.toInt)
+        })
+
+      val result = model.predict(testSet.map(r => (r.index_x, r.index_y)))
+      val rmse = result.map(r => ((r.index_x, r.index_y), r.rating))
+        .join(testSet.map(r => ((r.index_x, r.index_y), r.rating)))
+        .values
+        .map(i => math.pow(i._1 - i._2, 2))
+        .sum() / testSet.count()
+      println(s"rmse of test set: $rmse")
+    }
   }
 }
