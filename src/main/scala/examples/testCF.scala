@@ -21,12 +21,11 @@
   */
 package libble.examples
 
-import libble.collaborativeFiltering.{MatrixFactorizationByScopeDiffS, MatrixFactorizationByScope, MatrixFactorization, Rating}
+import libble.collaborativeFiltering.{ MatrixFactorizationByScope, MatrixFactorization, Rating}
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.{SparkConf, SparkContext}
 
 import scala.collection.mutable
-import scala.tools.nsc.transform.patmat.Logic.PropositionalLogic.False
 
 
 /***
@@ -81,12 +80,15 @@ object testCF {
         })
 
       val result = model.predict(testSet.map(r => (r.index_x, r.index_y)))
-      val rmse = result.map(r => ((r.index_x, r.index_y), r.rating))
+      val joinRDD = result.map(r => ((r.index_x, r.index_y), r.rating))
         .join(testSet.map(r => ((r.index_x, r.index_y), r.rating)))
-        .values
+
+//      println(s"size of testSet: ${testSet.count()}")
+//      println(s"size of joinRDD: ${joinRDD.count()}")
+      val rmse = joinRDD.values
         .map(i => math.pow(i._1 - i._2, 2))
-        .sum() / testSet.count()
-      println(s"rmse of test set: $rmse")
+        .mean()
+      println(s"rmse of test set: ${math.sqrt(rmse)}")
     }
   }
 }
