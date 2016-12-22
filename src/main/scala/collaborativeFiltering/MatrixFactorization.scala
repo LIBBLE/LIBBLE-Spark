@@ -188,7 +188,7 @@ class MatrixFactorization extends Serializable{
       }
       lossList.append(approxLoss)
 
-      println(s"approximate loss: $approxLoss, time: ${System.currentTimeMillis() - startTime}")
+//      println(s"approximate loss: $approxLoss, time: ${System.currentTimeMillis() - startTime}")
 
       i += 1
     }

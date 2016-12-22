@@ -111,9 +111,9 @@ class MatrixFactorizationByScope extends Serializable{
         val testTimeStart = System.currentTimeMillis()
         val bc_test_itemFactors = ratingsByRow.context.broadcast(itemFactors)
         //training loss
-        val loss = ratingsByRow.mapPartitions {iter =>
+        val loss = ratingsByRow.mapPartitionsWithIndex {(index,iter) =>
           val localV = bc_test_itemFactors.value
-          val localU = MatrixFactorizationByScope.workerstore.get[Map[Int, Vector]]("userFactors")
+          val localU = MatrixFactorizationByScope.workerstore.get[Map[Int, Vector]](s"userFactors_$index")
           val reguV = localV.mapValues(v => lambda_v * v.dot(v))
           val reguU = localU.mapValues(u => lambda_u * u.dot(u))
           val ls = iter.foldLeft(0.0) { (l, r) =>
