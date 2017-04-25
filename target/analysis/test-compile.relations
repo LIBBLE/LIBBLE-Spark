@@ -1,0 +1,24 @@
+products:
+   E:\MyGit\Commercial\LIBBLE-Spark\src\test\scala\linalg\VectorsOpt.scala -> E:\MyGit\Commercial\LIBBLE-Spark\target\test-classes\libble\linalg\VectorsOpt$$anonfun$1.class
+   E:\MyGit\Commercial\LIBBLE-Spark\src\test\scala\linalg\VectorsOpt.scala -> E:\MyGit\Commercial\LIBBLE-Spark\target\test-classes\libble\linalg\VectorsOpt$$anonfun$2.class
+   E:\MyGit\Commercial\LIBBLE-Spark\src\test\scala\linalg\VectorsOpt.scala -> E:\MyGit\Commercial\LIBBLE-Spark\target\test-classes\libble\linalg\VectorsOpt$$anonfun$3.class
+   E:\MyGit\Commercial\LIBBLE-Spark\src\test\scala\linalg\VectorsOpt.scala -> E:\MyGit\Commercial\LIBBLE-Spark\target\test-classes\libble\linalg\VectorsOpt$$anonfun$4.class
+   E:\MyGit\Commercial\LIBBLE-Spark\src\test\scala\linalg\VectorsOpt.scala -> E:\MyGit\Commercial\LIBBLE-Spark\target\test-classes\libble\linalg\VectorsOpt$$anonfun$5.class
+   E:\MyGit\Commercial\LIBBLE-Spark\src\test\scala\linalg\VectorsOpt.scala -> E:\MyGit\Commercial\LIBBLE-Spark\target\test-classes\libble\linalg\VectorsOpt.class
+binary dependencies:
+   E:\MyGit\Commercial\LIBBLE-Spark\src\test\scala\linalg\VectorsOpt.scala -> C:\Program Files\Java\jdk1.8.0_45\jre\lib\rt.jar
+   E:\MyGit\Commercial\LIBBLE-Spark\src\test\scala\linalg\VectorsOpt.scala -> C:\Users\Aplysia_x\.m2\repository\org\scala-lang\scala-library\2.11.8\scala-library-2.11.8.jar
+   E:\MyGit\Commercial\LIBBLE-Spark\src\test\scala\linalg\VectorsOpt.scala -> C:\Users\Aplysia_x\.m2\repository\org\scalatest\scalatest_2.11\2.2.6\scalatest_2.11-2.2.6.jar
+source dependencies:
+external dependencies:
+   E:\MyGit\Commercial\LIBBLE-Spark\src\test\scala\linalg\VectorsOpt.scala -> libble.linalg.DenseVector
+   E:\MyGit\Commercial\LIBBLE-Spark\src\test\scala\linalg\VectorsOpt.scala -> libble.linalg.SparseVector
+   E:\MyGit\Commercial\LIBBLE-Spark\src\test\scala\linalg\VectorsOpt.scala -> libble.linalg.VectorsOp
+   E:\MyGit\Commercial\LIBBLE-Spark\src\test\scala\linalg\VectorsOpt.scala -> libble.linalg.implicits.package$
+class names:
+   E:\MyGit\Commercial\LIBBLE-Spark\src\test\scala\linalg\VectorsOpt.scala -> libble.linalg.VectorsOpt
+   E:\MyGit\Commercial\LIBBLE-Spark\src\test\scala\linalg\VectorsOpt.scala -> libble.linalg.VectorsOpt$$anonfun$1
+   E:\MyGit\Commercial\LIBBLE-Spark\src\test\scala\linalg\VectorsOpt.scala -> libble.linalg.VectorsOpt$$anonfun$2
+   E:\MyGit\Commercial\LIBBLE-Spark\src\test\scala\linalg\VectorsOpt.scala -> libble.linalg.VectorsOpt$$anonfun$3
+   E:\MyGit\Commercial\LIBBLE-Spark\src\test\scala\linalg\VectorsOpt.scala -> libble.linalg.VectorsOpt$$anonfun$4
+   E:\MyGit\Commercial\LIBBLE-Spark\src\test\scala\linalg\VectorsOpt.scala -> libble.linalg.VectorsOpt$$anonfun$5

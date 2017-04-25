@@ -21,7 +21,7 @@
 
     <groupId>libble</groupId>
     <artifactId>libble-spark_${scala.binary.version}</artifactId>
-    <version>1.0.5-SNAPSHOT</version>
+    <version>0.0.5-SNAPSHOT</version>
 
     <url>https://github.com/Ru-Xiang/LIBBLE-Spark</url>
     <licenses>
