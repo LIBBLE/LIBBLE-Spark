@@ -511,7 +511,7 @@ class VectorsOp(val vec: Vector) {
       case sx: SparseVector => values = sx.values
       case _ => throw new IllegalArgumentException("norm1 only support SparseVector or DenseVector")
     }
-    values.foldLeft(0.0) { (a, b) => a + b }
+    values.foldLeft(0.0) { (a, b) => a + math.abs(b) }
   }
 
   /**
